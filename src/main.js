@@ -75,7 +75,7 @@ async function main() {
 
   // 7. Init UI
   const ui = initUI();
-  const { topBar, bottomBar, rightPanel, aiPanel, eventCard, cornerOverlays } = ui;
+  const { topBar, bottomBar, rightPanel, leftPanel, aiPanel, eventCard, cornerOverlays } = ui;
 
   // 8. Init RaycasterPicker
   initPicker(camera, renderer);
@@ -143,18 +143,24 @@ async function main() {
     const critCount = visibleEvents.filter(e => e.severity === 'CRITICAL').length;
     const highCount = visibleEvents.filter(e => e.severity === 'HIGH').length;
     const medCount  = visibleEvents.filter(e => e.severity === 'MEDIUM').length;
+    const allLayerCount = Object.values(getAllLayerStates()).filter(s => s.visible).length;
+
+    // Right panel — detailed event list + counts
     rightPanel.updateForPlaybackTime(cursorTime, visibleEvents, { critical: critCount, high: highCount, medium: medCount });
 
-    // Corner overlays — show the tracked event's coords or the latest visible event
+    // Left panel — threat status, data summary
+    leftPanel.updateForPlaybackTime(cursorTime, visibleEvents);
+
+    // Top bar — cursor time + threat badge
+    topBar.updateForPlaybackTime(cursorTime, visibleEvents);
+
+    // Corner overlays — tracked coords + alert count + latest event
     const trackedOrLatest = (lastTrackedId && visibleEvents.find(e => e.id === lastTrackedId)) || visibleEvents[0];
     if (trackedOrLatest) {
       cornerOverlays.updateCoordinates(trackedOrLatest.lat, trackedOrLatest.lon);
     }
-    cornerOverlays.updateStats(
-      Object.values(getAllLayerStates()).filter(s => s.visible).length,
-      visibleEvents.length,
-      0, 0
-    );
+    cornerOverlays.updateStats(allLayerCount, visibleEvents.length, visibleEvents);
+    cornerOverlays.updateStatus(visibleEvents.length, 'ACTIVE');
   }
 
   function deprecate_old_syncVisibleEvents(start, end) {
