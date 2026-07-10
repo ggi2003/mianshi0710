@@ -33,14 +33,12 @@ export function create(scene, earthGroup, data) {
     const lineGeo = new THREE.BufferGeometry().setFromPoints(curvePoints);
     const lineMat = new THREE.LineBasicMaterial({ color: 0x1565C0, transparent: true, opacity: 0.7 });
     const line = new THREE.Line(lineGeo, lineMat);
-    line.visible = false;
     group.add(line);
 
     const markerGeo = new THREE.ConeGeometry(0.18, 0.45, 4);
     const markerMat = new THREE.MeshBasicMaterial({ color: 0x90CAF9 });
     const marker = new THREE.Mesh(markerGeo, markerMat);
     marker.position.copy(points[Math.floor(points.length / 2)]);
-    marker.visible = false;
     group.add(marker);
 
     entities.push({
@@ -48,19 +46,16 @@ export function create(scene, earthGroup, data) {
       marker,
       timestamp: Date.parse(vessel.timestamp),
     });
+    // Show immediately — maritime traffic is always visible like flights & satellites
+    line.visible = true;
+    marker.visible = true;
   });
   earthGroup.add(group);
   return group;
 }
 
 export function update(timeRange) {
-  const start = timeRange?.start ?? -Infinity;
-  const end = timeRange?.end ?? Infinity;
-  entities.forEach(e => {
-    const visible = !Number.isNaN(e.timestamp) && e.timestamp >= start && e.timestamp <= end;
-    e.line.visible = visible;
-    e.marker.visible = visible;
-  });
+  // Maritime traffic is always visible regardless of time window
 }
 
 export function setVisible(visible) { if (group) group.visible = visible; }
