@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WORLDVIEW — Global Intelligence Platform</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%; height: 100%; overflow: hidden;
+      background: #000; font-family: 'Courier New', monospace; color: #00F0FF;
+      font-size: clamp(10px, 1.2vw, 13px);
+    }
+    #app {
+      display: grid;
+      grid-template-rows: clamp(32px, 5vh, 40px) 1fr clamp(80px, 15vh, 120px);
+      grid-template-columns: clamp(180px, 20vw, 280px) 1fr clamp(200px, 22vw, 300px);
+      grid-template-areas:
+        "topbar    topbar     topbar"
+        "leftpanel canvas     rightpanel"
+        "bottombar bottombar  bottombar";
+      width: 100%; height: 100%;
+    }
+    #top-bar {
+      grid-area: topbar; border-bottom: 1px solid rgba(0,240,255,0.3);
+      display: flex; align-items: center; padding: 0 clamp(6px, 1vw, 16px);
+      justify-content: space-between; overflow: hidden;
+    }
+    #left-panel {
+      grid-area: leftpanel; border-right: 1px solid rgba(0,240,255,0.2);
+      padding: clamp(6px, 1vw, 12px); overflow-y: auto;
+    }
+    #canvas-container { grid-area: canvas; position: relative; }
+    #right-panel {
+      grid-area: rightpanel; border-left: 1px solid rgba(0,240,255,0.2);
+      padding: clamp(6px, 1vw, 12px); overflow-y: auto;
+    }
+    #bottom-bar {
+      grid-area: bottombar; border-top: 1px solid rgba(0,240,255,0.3);
+      padding: clamp(4px, 0.8vh, 8px) clamp(6px, 1vw, 16px);
+      display: flex; flex-direction: column; gap: clamp(3px, 0.5vh, 6px);
+      overflow-y: auto;
+    }
+
+    /* CRT scanline overlay */
+    #crt-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none; z-index: 999;
+      background: repeating-linear-gradient(0deg, rgba(0,240,255,0.02) 0px, rgba(0,240,255,0.02) 1px, transparent 1px, transparent 3px);
+    }
+
+    /* Corner overlays — bottom is set via JS to match bottom-bar height */
+    #corner-bottom-left {
+      position: fixed; left: max(6px, 0.8vw); z-index: 100;
+      font-size: clamp(10px, 1vw, 12px); color: #00F0FF;
+      text-shadow: 0 0 4px #00F0FF;
+    }
+    #corner-bottom-right {
+      position: fixed; right: max(6px, 0.8vw); z-index: 100;
+      font-size: clamp(10px, 1vw, 12px); color: #00F0FF;
+      text-shadow: 0 0 4px #00F0FF; text-align: right;
+    }
+
+    /* ───── responsive breakpoints ───── */
+
+    /* tablet-ish: collapse side panels narrower, keep 3-column */
+    @media (max-width: 900px) {
+      #app {
+        grid-template-columns: 140px 1fr 160px;
+        grid-template-rows: 34px 1fr 100px;
+      }
+      #left-panel, #right-panel { font-size: 10px; }
+      #left-panel { padding: 6px; }
+      #right-panel { padding: 6px; }
+    }
+
+    /* phone: single column — canvas on top, panels stack below or hide */
+    @media (max-width: 600px) {
+      #app {
+        grid-template-columns: 1fr;
+        grid-template-rows: 34px 1fr auto auto auto;
+        grid-template-areas:
+          "topbar"
+          "canvas"
+          "leftpanel"
+          "rightpanel"
+          "bottombar";
+        overflow-y: auto;
+      }
+      #left-panel, #right-panel {
+        max-height: 35vh; overflow-y: auto;
+        border-right: none; border-left: none;
+        border-top: 1px solid rgba(0,240,255,0.2);
+      }
+      #left-panel  { order: 3; }
+      #right-panel { order: 4; }
+      #bottom-bar  { order: 5; }
+      #crt-overlay { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div id="top-bar"></div>
+    <div id="left-panel"></div>
+    <div id="canvas-container"></div>
+    <div id="right-panel"></div>
+    <div id="bottom-bar"></div>
+  </div>
+  <div id="corner-bottom-left"></div>
+  <div id="corner-bottom-right"></div>
+  <div id="crt-overlay"></div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

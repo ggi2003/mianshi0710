@@ -1,0 +1,812 @@
+[
+  {
+    "id": "evt-001",
+    "type": "naval_exercise",
+    "name": "Chemical Plume Detected near Aleppo",
+    "lat": 35.5,
+    "lon": 37.72,
+    "timestamp": "2026-07-03T17:15:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-002",
+    "type": "infrastructure_attack",
+    "name": "Satellite Signal Loss near Bandar Abbas",
+    "lat": 24.88,
+    "lon": 55.78,
+    "timestamp": "2026-07-03T18:20:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-003",
+    "type": "cyber_attack",
+    "name": "GPS Jamming Detected near Baghdad",
+    "lat": 32.39,
+    "lon": 44.01,
+    "timestamp": "2026-07-03T18:34:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-004",
+    "type": "diplomatic_incident",
+    "name": "Emergency Airspace Closure near Aleppo",
+    "lat": 36.09,
+    "lon": 36.73,
+    "timestamp": "2026-07-03T18:54:00.000Z",
+    "severity": "LOW"
+  },
+  {
+    "id": "evt-005",
+    "type": "maritime_incident",
+    "name": "Missile Launch Detected near Jeddah",
+    "lat": 21.32,
+    "lon": 39.38,
+    "timestamp": "2026-07-03T19:49:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-006",
+    "type": "airspace_closure",
+    "name": "OSINT Social Unrest near Manama",
+    "lat": 25.38,
+    "lon": 50.76,
+    "timestamp": "2026-07-03T20:12:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-007",
+    "type": "intel_report",
+    "name": "GPS Jamming Detected near Northern Gulf",
+    "lat": 27.8,
+    "lon": 48.82,
+    "timestamp": "2026-07-03T21:11:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-008",
+    "type": "airspace_closure",
+    "name": "Pipeline Sabotage near Manama",
+    "lat": 25.62,
+    "lon": 50.2,
+    "timestamp": "2026-07-04T01:28:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-009",
+    "type": "intel_report",
+    "name": "OSINT Social Unrest near Muscat",
+    "lat": 23.7,
+    "lon": 59.34,
+    "timestamp": "2026-07-04T03:38:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-010",
+    "type": "diplomatic_incident",
+    "name": "Naval Exercise Observed near Lebanon",
+    "lat": 33.35,
+    "lon": 35.72,
+    "timestamp": "2026-07-04T04:12:00.000Z",
+    "severity": "LOW"
+  },
+  {
+    "id": "evt-011",
+    "type": "naval_exercise",
+    "name": "Embassy Security Alert near Lebanon",
+    "lat": 34.41,
+    "lon": 36.26,
+    "timestamp": "2026-07-04T04:18:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-012",
+    "type": "satellite_maneuver",
+    "name": "Military Convoy Movement near Ruwais",
+    "lat": 24.07,
+    "lon": 53.53,
+    "timestamp": "2026-07-04T08:46:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-013",
+    "type": "troop_movement",
+    "name": "Coastal Radar Anomaly near Ruwais",
+    "lat": 23.97,
+    "lon": 51.98,
+    "timestamp": "2026-07-04T11:13:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-014",
+    "type": "intel_report",
+    "name": "Coastal Radar Anomaly near Manama",
+    "lat": 26.16,
+    "lon": 50.52,
+    "timestamp": "2026-07-04T15:04:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-015",
+    "type": "naval_exercise",
+    "name": "Widespread GPS Spoofing near Khartoum",
+    "lat": 16.52,
+    "lon": 32.98,
+    "timestamp": "2026-07-04T16:09:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-016",
+    "type": "airspace_closure",
+    "name": "Embassy Security Alert near Ruwais",
+    "lat": 24.95,
+    "lon": 52.98,
+    "timestamp": "2026-07-04T17:07:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-017",
+    "type": "diplomatic_incident",
+    "name": "No-Fly Zone Activated near Eastern Med",
+    "lat": 31.59,
+    "lon": 33.86,
+    "timestamp": "2026-07-04T20:24:00.000Z",
+    "severity": "LOW"
+  },
+  {
+    "id": "evt-018",
+    "type": "naval_exercise",
+    "name": "Vessel Detention near Amman",
+    "lat": 31.62,
+    "lon": 34.94,
+    "timestamp": "2026-07-05T02:11:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-019",
+    "type": "infrastructure_attack",
+    "name": "Chemical Plume Detected near Arabian Sea",
+    "lat": 20.92,
+    "lon": 61.66,
+    "timestamp": "2026-07-05T02:52:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-020",
+    "type": "diplomatic_incident",
+    "name": "Coastal Radar Anomaly near Yemen",
+    "lat": 16.05,
+    "lon": 43.76,
+    "timestamp": "2026-07-05T06:33:00.000Z",
+    "severity": "LOW"
+  },
+  {
+    "id": "evt-021",
+    "type": "missile_launch",
+    "name": "GPS Jamming Detected near Basra",
+    "lat": 29.42,
+    "lon": 48.05,
+    "timestamp": "2026-07-05T06:37:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-022",
+    "type": "missile_launch",
+    "name": "Satellite Signal Loss near Aqaba",
+    "lat": 29.23,
+    "lon": 35.64,
+    "timestamp": "2026-07-05T11:07:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-023",
+    "type": "internet_blackout",
+    "name": "Embassy Security Alert near Istanbul",
+    "lat": 41.73,
+    "lon": 29.84,
+    "timestamp": "2026-07-05T11:41:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-024",
+    "type": "cyber_attack",
+    "name": "Port Closure Order near Cairo",
+    "lat": 30.56,
+    "lon": 30.5,
+    "timestamp": "2026-07-05T12:27:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-025",
+    "type": "internet_blackout",
+    "name": "Naval Exercise Observed near Duqm",
+    "lat": 18.48,
+    "lon": 56.72,
+    "timestamp": "2026-07-05T13:26:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-026",
+    "type": "intel_report",
+    "name": "GPS Jamming Detected near Khartoum",
+    "lat": 16.03,
+    "lon": 33.26,
+    "timestamp": "2026-07-05T13:46:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-027",
+    "type": "gps_interference",
+    "name": "ATC Cyber Attack near Eastern Mediterranean",
+    "lat": 35.41,
+    "lon": 35.25,
+    "timestamp": "2026-07-05T14:42:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-028",
+    "type": "airspace_closure",
+    "name": "Internet Shutdown near Eastern Med",
+    "lat": 31.87,
+    "lon": 33.38,
+    "timestamp": "2026-07-05T22:03:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-029",
+    "type": "satellite_maneuver",
+    "name": "Satellite Signal Loss near Eastern Med",
+    "lat": 31.68,
+    "lon": 33.17,
+    "timestamp": "2026-07-05T22:25:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-030",
+    "type": "airspace_closure",
+    "name": "Vessel Detention near Bab el-Mandeb",
+    "lat": 12.25,
+    "lon": 43.52,
+    "timestamp": "2026-07-06T01:16:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-031",
+    "type": "airspace_violation",
+    "name": "Unidentified Aircraft Violation near Amman",
+    "lat": 31.33,
+    "lon": 35.01,
+    "timestamp": "2026-07-06T01:42:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-032",
+    "type": "maritime_incident",
+    "name": "GPS Jamming Detected near Tehran",
+    "lat": 34.7,
+    "lon": 50.62,
+    "timestamp": "2026-07-06T02:45:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-033",
+    "type": "missile_launch",
+    "name": "Naval Exercise Observed near Manama",
+    "lat": 26.47,
+    "lon": 49.74,
+    "timestamp": "2026-07-06T03:56:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-034",
+    "type": "gps_interference",
+    "name": "Military Convoy Movement near Eastern Med",
+    "lat": 31.58,
+    "lon": 33.89,
+    "timestamp": "2026-07-06T06:29:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-035",
+    "type": "gps_interference",
+    "name": "GPS Jamming Detected near Jeddah",
+    "lat": 20.95,
+    "lon": 38.8,
+    "timestamp": "2026-07-06T10:06:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-036",
+    "type": "internet_blackout",
+    "name": "Satellite Orbital Maneuver near Dubai",
+    "lat": 25.03,
+    "lon": 54.82,
+    "timestamp": "2026-07-06T11:14:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-037",
+    "type": "naval_exercise",
+    "name": "Pipeline Sabotage near Cairo",
+    "lat": 29.86,
+    "lon": 30.75,
+    "timestamp": "2026-07-06T13:08:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-038",
+    "type": "internet_blackout",
+    "name": "Coastal Radar Anomaly near Homs",
+    "lat": 33.6,
+    "lon": 36.78,
+    "timestamp": "2026-07-06T13:28:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-039",
+    "type": "intel_report",
+    "name": "Drone Swarm Activity near Basra",
+    "lat": 29.68,
+    "lon": 48.18,
+    "timestamp": "2026-07-06T13:40:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-040",
+    "type": "troop_movement",
+    "name": "Vessel Detention near Dubai",
+    "lat": 24.32,
+    "lon": 55.46,
+    "timestamp": "2026-07-06T14:30:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-041",
+    "type": "missile_launch",
+    "name": "SAM Site Activation near Bandar Abbas",
+    "lat": 26.37,
+    "lon": 55.55,
+    "timestamp": "2026-07-06T16:32:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-042",
+    "type": "airspace_closure",
+    "name": "Missile Launch Detected near Yemen",
+    "lat": 14.74,
+    "lon": 44.28,
+    "timestamp": "2026-07-06T18:02:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-043",
+    "type": "infrastructure_attack",
+    "name": "Coastal Radar Anomaly near Tehran",
+    "lat": 36.64,
+    "lon": 51.03,
+    "timestamp": "2026-07-06T21:32:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-044",
+    "type": "gps_interference",
+    "name": "Submarine Detection near Eastern Mediterranean",
+    "lat": 35.95,
+    "lon": 34.38,
+    "timestamp": "2026-07-07T01:34:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-045",
+    "type": "intel_report",
+    "name": "Embassy Security Alert near Arabian Sea",
+    "lat": 19.3,
+    "lon": 61.26,
+    "timestamp": "2026-07-07T02:03:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-046",
+    "type": "missile_launch",
+    "name": "Missile Launch Detected near Aqaba",
+    "lat": 28.77,
+    "lon": 35.83,
+    "timestamp": "2026-07-07T06:08:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-047",
+    "type": "naval_exercise",
+    "name": "Widespread GPS Spoofing near Strait of Hormuz",
+    "lat": 26.66,
+    "lon": 56.12,
+    "timestamp": "2026-07-07T06:33:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-048",
+    "type": "airspace_violation",
+    "name": "Naval Exercise Observed near Northern Gulf",
+    "lat": 28.37,
+    "lon": 48.04,
+    "timestamp": "2026-07-07T10:49:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-049",
+    "type": "internet_blackout",
+    "name": "Port Closure Order near Northern Gulf",
+    "lat": 28.6,
+    "lon": 48.16,
+    "timestamp": "2026-07-07T12:50:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-050",
+    "type": "satellite_maneuver",
+    "name": "Satellite Signal Loss near Eastern Med",
+    "lat": 31.72,
+    "lon": 32.74,
+    "timestamp": "2026-07-07T13:49:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-051",
+    "type": "intel_report",
+    "name": "Internet Shutdown near Homs",
+    "lat": 34.45,
+    "lon": 37.05,
+    "timestamp": "2026-07-07T15:19:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-052",
+    "type": "gps_interference",
+    "name": "Refinery Explosion near Kuwait Border",
+    "lat": 29.01,
+    "lon": 47.21,
+    "timestamp": "2026-07-07T16:16:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-053",
+    "type": "internet_blackout",
+    "name": "Border Crossing Alert near Kuwait Border",
+    "lat": 29.2,
+    "lon": 47.7,
+    "timestamp": "2026-07-07T19:06:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-054",
+    "type": "airspace_violation",
+    "name": "Unidentified Aircraft Violation near Bab el-Mandeb",
+    "lat": 12.58,
+    "lon": 42.82,
+    "timestamp": "2026-07-07T22:42:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-055",
+    "type": "internet_blackout",
+    "name": "No-Fly Zone Activated near Lebanon",
+    "lat": 33.81,
+    "lon": 36.25,
+    "timestamp": "2026-07-07T23:36:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-056",
+    "type": "airspace_violation",
+    "name": "Satellite Signal Loss near Homs",
+    "lat": 34.93,
+    "lon": 35.87,
+    "timestamp": "2026-07-08T00:01:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-057",
+    "type": "gps_interference",
+    "name": "Widespread GPS Spoofing near Eastern Med",
+    "lat": 33.32,
+    "lon": 32.77,
+    "timestamp": "2026-07-08T02:00:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-058",
+    "type": "satellite_maneuver",
+    "name": "Submarine Detection near Jeddah",
+    "lat": 21.53,
+    "lon": 38.77,
+    "timestamp": "2026-07-08T03:02:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-059",
+    "type": "cyber_attack",
+    "name": "Pipeline Sabotage near Amman",
+    "lat": 31.09,
+    "lon": 36,
+    "timestamp": "2026-07-08T07:58:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-060",
+    "type": "satellite_maneuver",
+    "name": "Submarine Detection near Yemen",
+    "lat": 15.79,
+    "lon": 44.34,
+    "timestamp": "2026-07-08T09:27:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-061",
+    "type": "troop_movement",
+    "name": "Satellite Signal Loss near Duqm",
+    "lat": 18.65,
+    "lon": 56.87,
+    "timestamp": "2026-07-08T11:35:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-062",
+    "type": "maritime_incident",
+    "name": "ATC Cyber Attack near Cairo",
+    "lat": 30.12,
+    "lon": 32.12,
+    "timestamp": "2026-07-08T11:56:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-063",
+    "type": "troop_movement",
+    "name": "GPS Jamming Detected near Tehran",
+    "lat": 34.95,
+    "lon": 50.49,
+    "timestamp": "2026-07-08T12:07:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-064",
+    "type": "infrastructure_attack",
+    "name": "Chemical Plume Detected near Homs",
+    "lat": 34.2,
+    "lon": 35.63,
+    "timestamp": "2026-07-08T13:40:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-065",
+    "type": "airspace_violation",
+    "name": "Naval Exercise Observed near Bandar Abbas",
+    "lat": 26,
+    "lon": 56.5,
+    "timestamp": "2026-07-08T15:52:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-066",
+    "type": "infrastructure_attack",
+    "name": "OSINT Social Unrest near Basra",
+    "lat": 29.77,
+    "lon": 48.19,
+    "timestamp": "2026-07-08T16:50:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-067",
+    "type": "missile_launch",
+    "name": "Military Convoy Movement near Duqm",
+    "lat": 19.32,
+    "lon": 56.02,
+    "timestamp": "2026-07-08T17:53:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-068",
+    "type": "internet_blackout",
+    "name": "Naval Exercise Observed near Ruwais",
+    "lat": 23.95,
+    "lon": 52.05,
+    "timestamp": "2026-07-08T18:48:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-069",
+    "type": "cyber_attack",
+    "name": "Satellite Signal Loss near Baghdad",
+    "lat": 33.05,
+    "lon": 45.1,
+    "timestamp": "2026-07-08T19:49:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-070",
+    "type": "gps_interference",
+    "name": "Pipeline Sabotage near Eastern Med",
+    "lat": 31.66,
+    "lon": 32.58,
+    "timestamp": "2026-07-08T20:34:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-071",
+    "type": "missile_launch",
+    "name": "OSINT Social Unrest near Arabian Sea",
+    "lat": 19.96,
+    "lon": 62.86,
+    "timestamp": "2026-07-08T22:13:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-072",
+    "type": "airspace_closure",
+    "name": "Chemical Plume Detected near Amman",
+    "lat": 31.11,
+    "lon": 34.99,
+    "timestamp": "2026-07-09T00:57:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-073",
+    "type": "gps_interference",
+    "name": "Unidentified Aircraft Violation near Muscat",
+    "lat": 23.05,
+    "lon": 59,
+    "timestamp": "2026-07-09T01:21:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-074",
+    "type": "airspace_violation",
+    "name": "ATC Cyber Attack near Jeddah",
+    "lat": 21.57,
+    "lon": 39.54,
+    "timestamp": "2026-07-09T06:22:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-075",
+    "type": "gps_interference",
+    "name": "Pipeline Sabotage near Basra",
+    "lat": 30.64,
+    "lon": 48.15,
+    "timestamp": "2026-07-09T11:58:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-076",
+    "type": "maritime_incident",
+    "name": "Emergency Airspace Closure near Istanbul",
+    "lat": 41.96,
+    "lon": 28.35,
+    "timestamp": "2026-07-09T12:57:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-077",
+    "type": "internet_blackout",
+    "name": "Military Convoy Movement near Eastern Mediterranean",
+    "lat": 35.08,
+    "lon": 34.06,
+    "timestamp": "2026-07-09T19:43:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-078",
+    "type": "troop_movement",
+    "name": "Embassy Security Alert near Amman",
+    "lat": 31.39,
+    "lon": 36.09,
+    "timestamp": "2026-07-09T20:37:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-079",
+    "type": "airspace_violation",
+    "name": "Missile Launch Detected near Aqaba",
+    "lat": 29.06,
+    "lon": 35.34,
+    "timestamp": "2026-07-09T21:11:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-080",
+    "type": "missile_launch",
+    "name": "Border Crossing Alert near Manama",
+    "lat": 25.87,
+    "lon": 50.75,
+    "timestamp": "2026-07-09T22:03:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-081",
+    "type": "airspace_closure",
+    "name": "No-Fly Zone Activated near Ruwais",
+    "lat": 24.43,
+    "lon": 52.1,
+    "timestamp": "2026-07-09T22:23:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-082",
+    "type": "missile_launch",
+    "name": "Vessel Detention near Basra",
+    "lat": 30.54,
+    "lon": 47.85,
+    "timestamp": "2026-07-09T23:23:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-083",
+    "type": "troop_movement",
+    "name": "Internet Shutdown near Eastern Med",
+    "lat": 32.72,
+    "lon": 34.26,
+    "timestamp": "2026-07-10T00:24:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-084",
+    "type": "gps_interference",
+    "name": "Pipeline Sabotage near Amman",
+    "lat": 31.35,
+    "lon": 36.77,
+    "timestamp": "2026-07-10T01:58:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-085",
+    "type": "infrastructure_attack",
+    "name": "No-Fly Zone Activated near Manama",
+    "lat": 26.79,
+    "lon": 50.15,
+    "timestamp": "2026-07-10T04:19:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-086",
+    "type": "naval_exercise",
+    "name": "Submarine Detection near Cairo",
+    "lat": 30.36,
+    "lon": 31.5,
+    "timestamp": "2026-07-10T07:19:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-087",
+    "type": "gps_interference",
+    "name": "Port Closure Order near Eastern Med",
+    "lat": 33.29,
+    "lon": 33.67,
+    "timestamp": "2026-07-10T07:25:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-088",
+    "type": "naval_exercise",
+    "name": "Border Crossing Alert near Homs",
+    "lat": 33.54,
+    "lon": 36.78,
+    "timestamp": "2026-07-10T08:25:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-089",
+    "type": "cyber_attack",
+    "name": "Cable Cut Incident near Basra",
+    "lat": 29.74,
+    "lon": 49.44,
+    "timestamp": "2026-07-10T10:25:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-090",
+    "type": "diplomatic_incident",
+    "name": "Emergency Airspace Closure near Yemen",
+    "lat": 14.87,
+    "lon": 44.26,
+    "timestamp": "2026-07-10T15:50:00.000Z",
+    "severity": "LOW"
+  }
+]
