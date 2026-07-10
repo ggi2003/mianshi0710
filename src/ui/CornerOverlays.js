@@ -11,32 +11,28 @@ function syncCornerBottom() {
   if (brEl) brEl.style.bottom = (h + gap) + 'px';
 }
 
+function build() {
+  if (blEl) blEl.innerHTML = `<div id="bl-coords" style="text-shadow:0 0 4px #00F0FF;">--°--'--"N --°--'--"E</div><div id="bl-status" style="margin-top:2px;opacity:0.7;">MSGS: --</div>`;
+  if (brEl) brEl.innerHTML = `
+    <div id="br-stats-line" style="text-shadow:0 0 4px #00F0FF;">${t('corner.layers')}: <span id="br-layer-count">${_lastLayerCount}</span> ${t('corner.active')}</div>
+    <div id="br-alerts-line" style="margin-top:2px;opacity:0.7;">${t('corner.alerts')}: <span id="br-alert-count">${_lastAlertCount}</span> ${t('corner.pending')}</div>
+    <div id="br-event-line" style="margin-top:2px;font-size:0.85em;opacity:0.5;"><span id="br-latest-event">${_lastLatestEvent}</span></div>
+    <div id="br-fps-line" style="margin-top:2px;font-size:0.8em;opacity:0.4;">${t('corner.fps')}: <span id="br-fps-value">--</span></div>
+  `;
+  syncCornerBottom();
+}
+
 export function init(container) {
   blEl = document.getElementById('corner-bottom-left');
   brEl = document.getElementById('corner-bottom-right');
-
-  if (blEl) blEl.innerHTML = `<div id="bl-coords" style="text-shadow:0 0 4px #00F0FF;">--°--'--"N --°--'--"E</div><div id="bl-status" style="margin-top:2px;opacity:0.7;">MSGS: --</div>`;
-  if (brEl) brEl.innerHTML = `
-    <div id="br-stats-line" style="text-shadow:0 0 4px #00F0FF;"><span data-i18n="corner.layers">${t('corner.layers')}</span>: <span id="br-layer-count">0</span> <span data-i18n="corner.active">${t('corner.active')}</span></div>
-    <div id="br-alerts-line" style="margin-top:2px;opacity:0.7;"><span data-i18n="corner.alerts">${t('corner.alerts')}</span>: <span id="br-alert-count">0</span> <span data-i18n="corner.pending">${t('corner.pending')}</span></div>
-    <div id="br-event-line" style="margin-top:2px;font-size:0.85em;opacity:0.5;"><span id="br-latest-event">—</span></div>
-  `;
+  build();
 
   syncCornerBottom();
   resizeObs = new ResizeObserver(() => syncCornerBottom());
   const bb = document.getElementById('bottom-bar');
   if (bb) resizeObs.observe(bb);
   window.addEventListener('resize', syncCornerBottom);
-
-  window.addEventListener('langchange', () => {
-    // Restore values after lang change rewrites data-i18n
-    const lc = document.getElementById('br-layer-count');
-    const ac = document.getElementById('br-alert-count');
-    const le = document.getElementById('br-latest-event');
-    if (lc) lc.textContent = _lastLayerCount;
-    if (ac) ac.textContent = _lastAlertCount;
-    if (le) le.textContent = _lastLatestEvent;
-  });
+  window.addEventListener('langchange', build);
 
   return { blEl, brEl };
 }
@@ -44,8 +40,8 @@ export function init(container) {
 let _lastLayerCount = 0;
 let _lastAlertCount = 0;
 let _lastLatestEvent = '—';
+let _lastFps = 0;
 
-/** Format lat/lon as DD°MM'SS"X */
 function formatLatLon(lat, lon) {
   const fmt = (deg, pos, neg) => {
     const sign = deg >= 0;
@@ -63,12 +59,6 @@ export function updateCoordinates(lat, lon) {
   if (el) el.textContent = formatLatLon(lat, lon);
 }
 
-/**
- * Push playback-reactive data into the corner overlays.
- * @param {number} layerCount
- * @param {number} alertCount    number of visible events
- * @param {Array}  visibleEvents full event objects (for latest-event label)
- */
 export function updateStats(layerCount, alertCount, visibleEvents) {
   _lastLayerCount = layerCount;
   _lastAlertCount = alertCount;
@@ -83,13 +73,18 @@ export function updateStats(layerCount, alertCount, visibleEvents) {
   if (le) {
     if (visibleEvents && visibleEvents.length > 0) {
       const latest = visibleEvents[visibleEvents.length - 1];
-      const short = latest.name?.slice(0, 45) || '—';
-      _lastLatestEvent = `LATEST: ${latest.severity || ''} — ${short}`;
+      _lastLatestEvent = `LATEST: ${latest.severity || ''} — ${(latest.name || '').slice(0, 45)}`;
     } else {
       _lastLatestEvent = '—';
     }
     le.textContent = _lastLatestEvent;
   }
+}
+
+export function updateFps(fps) {
+  _lastFps = fps;
+  const el = document.getElementById('br-fps-value');
+  if (el) el.textContent = fps;
 }
 
 export function updateStatus(messages, statusCode) {
@@ -98,6 +93,7 @@ export function updateStatus(messages, statusCode) {
 }
 
 export function destroy() {
+  window.removeEventListener('langchange', build);
   if (resizeObs) { resizeObs.disconnect(); resizeObs = null; }
   window.removeEventListener('resize', syncCornerBottom);
   if (blEl) blEl.innerHTML = '';

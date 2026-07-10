@@ -3,6 +3,7 @@ import { COLORS } from '../config.js';
 
 let el, playbackBtn, langBtn;
 let _playbackCallback = null;
+let _isPlaying = false;
 
 function formatBeijingShort(ms) {
   const d = new Date(ms + 8 * 3600000);
@@ -12,23 +13,21 @@ function formatBeijingShort(ms) {
   return `${h}:${m}:${s}`;
 }
 
-export function init(container) {
-  el = document.createElement('div');
-  el.style.cssText = 'display:flex;align-items:center;justify-content:space-between;width:100%;';
+function build() {
+  if (!el) return;
   el.innerHTML = `
     <div style="display:flex;align-items:center;gap:24px;">
       <div style="font-size:18px;font-weight:bold;text-shadow:0 0 8px #00F0FF;">WORLDVIEW</div>
       <span id="tb-cursor-time" style="font-size:11px;color:#00F0FF;">--:--:-- BJT</span>
     </div>
     <div style="display:flex;align-items:center;gap:20px;">
-      <span id="tb-threat-badge" style="font-size:11px;padding:1px 8px;border:1px solid #00E676;color:#00E676;">NORMAL</span>
+      <span id="tb-threat-badge" style="font-size:11px;padding:1px 8px;border:1px solid #00E676;color:#00E676;">${getLang() === 'zh' ? '正常' : 'NORMAL'}</span>
       <span style="font-size:11px;color:rgba(0,240,255,0.6);">TOP SECRET // SI-TK // NOFORN</span>
       <span style="font-size:11px;">KB11-6040 OPS-4138</span>
-      <span id="playback-btn" data-i18n="btn.playback" style="cursor:pointer;padding:2px 10px;border:1px solid #00F0FF;color:#00F0FF;font-size:11px;">${t('btn.playback')}</span>
-      <span id="lang-btn" data-i18n="label.lang" style="cursor:pointer;padding:2px 10px;border:1px solid ${COLORS.warning};color:${COLORS.warning};font-size:11px;">${t('label.lang')}</span>
+      <span id="playback-btn" style="cursor:pointer;padding:2px 10px;border:1px solid #00F0FF;color:#00F0FF;font-size:11px;">${t(_isPlaying ? 'btn.playing' : 'btn.playback')}</span>
+      <span id="lang-btn" style="cursor:pointer;padding:2px 10px;border:1px solid ${COLORS.warning};color:${COLORS.warning};font-size:11px;">${t('label.lang')}</span>
     </div>
   `;
-  container.appendChild(el);
 
   playbackBtn = el.querySelector('#playback-btn');
   langBtn = el.querySelector('#lang-btn');
@@ -41,28 +40,28 @@ export function init(container) {
   if (_playbackCallback && playbackBtn) {
     playbackBtn.addEventListener('click', _playbackCallback);
   }
+}
 
+export function init(container) {
+  el = document.createElement('div');
+  el.style.cssText = 'display:flex;align-items:center;justify-content:space-between;width:100%;';
+  container.appendChild(el);
+  build();
+  window.addEventListener('langchange', build);
   return el;
 }
 
 export function setPlaybackState(isPlaying) {
+  _isPlaying = isPlaying;
   if (playbackBtn) playbackBtn.textContent = t(isPlaying ? 'btn.playing' : 'btn.playback');
 }
 
-/**
- * Push playback-time-reactive data into the top bar.
- * tb-cursor-time always shows the current system clock.
- * @param {number} cursorMs   current playback time (ms) — NOT used for clock
- * @param {Array}  events     visible intel events
- */
 export function updateForPlaybackTime(cursorMs, events) {
   if (!el) return;
 
-  // Always show live system clock, not playback time
   const timeEl = el.querySelector('#tb-cursor-time');
   if (timeEl) timeEl.textContent = formatBeijingShort(Date.now()) + ' BJT';
 
-  // Threat badge
   const badge = el.querySelector('#tb-threat-badge');
   if (badge) {
     const has = (s) => events && events.some(e => e.severity === s);
@@ -85,5 +84,6 @@ export function on(event, callback) {
 }
 
 export function destroy() {
+  window.removeEventListener('langchange', build);
   if (el) { el.remove(); el = null; }
 }

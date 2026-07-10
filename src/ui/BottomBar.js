@@ -10,9 +10,8 @@ let _alertActive = false;
 let _spiralActive = false;
 let _activeSpeedBtn = null;
 
-export function init(container) {
-  el = document.createElement('div');
-  el.style.cssText = 'display:flex;flex-direction:column;gap:6px;font-size:11px;width:100%;';
+function build() {
+  if (!el) return;
   el.innerHTML = `
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
       <button data-speed="0.166" data-i18n="speed.1/6x" style="border:1px solid ${COLORS.border};background:${COLORS.panelBg};color:${COLORS.primaryText};padding:2px 6px;cursor:pointer;font-size:10px;">${t('speed.1/6x')}</button>
@@ -24,15 +23,15 @@ export function init(container) {
       <button data-speed="600" data-i18n="speed.10h/x" style="border:1px solid ${COLORS.border};background:${COLORS.panelBg};color:${COLORS.primaryText};padding:2px 6px;cursor:pointer;font-size:10px;">${t('speed.10h/x')}</button>
       <button data-speed="3000" data-i18n="speed.50h/x" style="border:1px solid ${COLORS.border};background:${COLORS.panelBg};color:${COLORS.primaryText};padding:2px 6px;cursor:pointer;font-size:10px;">${t('speed.50h/x')}</button>
       <button data-speed="12000" data-i18n="speed.200h/x" style="border:1px solid ${COLORS.border};background:${COLORS.panelBg};color:${COLORS.primaryText};padding:2px 6px;cursor:pointer;font-size:10px;">${t('speed.200h/x')}</button>
-      <button id="pause-btn" data-i18n="btn.pause" style="border:1px solid ${COLORS.warning};background:${COLORS.panelBg};color:${COLORS.warning};padding:2px 8px;cursor:pointer;font-size:10px;">${t('btn.pause')}</button>
-      <button id="off-btn" data-i18n="btn.off" style="border:1px solid ${COLORS.danger};background:${COLORS.panelBg};color:${COLORS.danger};padding:2px 8px;cursor:pointer;font-size:10px;">${t('btn.off')}</button>
+      <button id="pause-btn" data-i18n="btn.pause" style="border:1px solid ${COLORS.warning};background:${COLORS.panelBg};color:${COLORS.warning};padding:2px 8px;cursor:pointer;font-size:10px;">${_paused ? '▶' : t('btn.pause')}</button>
+      <button id="off-btn" data-i18n="btn.off" style="border:1px solid ${COLORS.danger};background:${COLORS.panelBg};color:${COLORS.danger};padding:2px 8px;cursor:pointer;font-size:10px;">${_off ? '✕' : t('btn.off')}</button>
       <input type="range" id="timeline-slider" min="0" max="168" value="168" style="flex:1;min-width:100px;accent-color:${COLORS.primaryText};">
       <span id="time-label" data-i18n="label.now" style="font-size:10px;">${t('label.now')}</span>
     </div>
     <div id="layer-toggles" style="display:flex;gap:10px;flex-wrap:wrap;font-size:10px;"></div>
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
       <button id="view-toggle-btn" data-i18n="btn.space-arc" style="border:1px solid ${COLORS.primaryText};background:${COLORS.panelBg};color:${COLORS.primaryText};padding:3px 10px;cursor:pointer;font-size:10px;">${t('btn.space-arc')}</button>
-      <button id="night-vision-btn" data-i18n="btn.night-vision" style="border:1px solid ${COLORS.primaryText};background:${COLORS.panelBg};color:${COLORS.primaryText};padding:3px 10px;cursor:pointer;font-size:10px;">${t('btn.night-vision')}</button>
+      <button id="night-vision-btn" data-i18n="btn.night-vision" style="border:1px solid ${COLORS.primaryText};background:${COLORS.panelBg};color:${COLORS.primaryText};padding:3px 10px;cursor:pointer;font-size:10px;">${_nightVision ? t('btn.normal-color') : t('btn.night-vision')}</button>
       <label style="font-size:10px;display:inline-flex;align-items:center;gap:3px;"><span data-i18n="label.glow">${t('label.glow')}</span> <input type="range" id="glow-slider" min="0" max="200" value="100" style="width:60px;accent-color:${COLORS.primaryText};"></label>
       <label style="font-size:10px;display:inline-flex;align-items:center;gap:3px;"><span data-i18n="label.sharp">${t('label.sharp')}</span> <input type="range" id="sharpen-slider" min="0" max="100" value="30" style="width:60px;accent-color:${COLORS.primaryText};"></label>
       <label style="font-size:10px;display:inline-flex;align-items:center;gap:3px;"><span data-i18n="label.hue">${t('label.hue')}</span> <input type="range" id="hue-slider" min="-180" max="180" value="0" style="width:60px;accent-color:${COLORS.primaryText};"></label>
@@ -40,16 +39,16 @@ export function init(container) {
       <button id="spiral-btn" data-i18n="btn.spiral" style="border:1px solid ${COLORS.primaryText};background:${COLORS.panelBg};color:${COLORS.primaryText};padding:3px 8px;cursor:pointer;font-size:10px;">${t('btn.spiral')}</button>
     </div>
   `;
-  container.appendChild(el);
+
   bindEvents();
-  return el;
+  // Rebuild layer toggles immediately
+  window.dispatchEvent(new CustomEvent('bottombar-rebuilt'));
 }
 
 function bindEvents() {
   const speedBtns = el.querySelectorAll('[data-speed]');
   speedBtns.forEach(btn => {
     btn.addEventListener('click', () => {
-      // Highlight active speed button
       speedBtns.forEach(b => {
         b.style.borderColor = COLORS.border;
         b.style.color = COLORS.primaryText;
@@ -149,40 +148,34 @@ function emit(event, data) {
   if (listeners[event]) listeners[event].forEach(cb => cb(data));
 }
 
+export function init(container) {
+  el = document.createElement('div');
+  el.style.cssText = 'display:flex;flex-direction:column;gap:6px;font-size:11px;width:100%;';
+  container.appendChild(el);
+  build();
+  window.addEventListener('langchange', build);
+  return el;
+}
+
 export function setTimelinePosition(position) {
   const slider = el?.querySelector('#timeline-slider');
   const label = el?.querySelector('#time-label');
-  if (slider) {
-    slider.value = Math.round(position);
-  }
+  if (slider) slider.value = Math.round(position);
   if (label) {
     const hoursToEnd = Math.round(168 - position);
     label.textContent = hoursToEnd === 0 ? t('label.now') : `H-${hoursToEnd}`;
   }
 }
 
-export function setTimeRange(start, end) {
-  // Legacy function - not used in playback
-}
-
 export function setActiveSpeed(speed) {
   const speedBtns = el?.querySelectorAll('[data-speed]');
   if (!speedBtns) return;
-
-  // Remove highlight from all buttons
   speedBtns.forEach(b => {
     b.style.borderColor = COLORS.border;
     b.style.color = COLORS.primaryText;
     b.style.textShadow = 'none';
   });
-
-  // When speed is null (timeline reached "now"), just un-highlight all
-  if (speed === null) {
-    _activeSpeedBtn = null;
-    return;
-  }
-
-  // Find and highlight the matching speed button
+  if (speed === null) { _activeSpeedBtn = null; return; }
   const targetBtn = Array.from(speedBtns).find(btn => parseFloat(btn.dataset.speed) === speed);
   if (targetBtn) {
     targetBtn.style.borderColor = COLORS.primaryText;
@@ -192,7 +185,6 @@ export function setActiveSpeed(speed) {
   }
 }
 
-/** Set pause button to play icon ▶ (used when playback reaches "now"). */
 export function showPlayIcon() {
   _paused = true;
   const btn = el?.querySelector('#pause-btn');
@@ -201,10 +193,6 @@ export function showPlayIcon() {
     btn.style.borderColor = COLORS.success;
     btn.style.color = COLORS.success;
   }
-}
-
-export function setPlaybackSpeed(speed) {
-  // Speed button highlighting is handled in the click event
 }
 
 export function setLayerStates(states) {
@@ -231,9 +219,7 @@ export function setLayerStates(states) {
 export function setViewMode(mode) {
   _viewMode = mode;
   const btn = el?.querySelector('#view-toggle-btn');
-  if (btn) {
-    btn.textContent = mode === 'low-orbit' ? t('btn.space-arc') : t('btn.low-orbit');
-  }
+  if (btn) btn.textContent = mode === 'low-orbit' ? t('btn.space-arc') : t('btn.low-orbit');
 }
 
 export function setNightVision(enabled) {
@@ -246,17 +232,12 @@ export function setNightVision(enabled) {
   }
 }
 
-export function setVisualParams({ glow, sharpen, hue }) {
-  if (glow !== undefined) { const s = el?.querySelector('#glow-slider'); if (s) s.value = glow * 100; }
-  if (sharpen !== undefined) { const s = el?.querySelector('#sharpen-slider'); if (s) s.value = sharpen * 100; }
-  if (hue !== undefined) { const s = el?.querySelector('#hue-slider'); if (s) s.value = hue; }
-}
-
 export function on(event, callback) {
   if (!listeners[event]) listeners[event] = [];
   listeners[event].push(callback);
 }
 
 export function destroy() {
+  window.removeEventListener('langchange', build);
   if (el) { el.remove(); el = null; listeners = {}; }
 }
