@@ -176,6 +176,12 @@ export function setActiveSpeed(speed) {
     b.style.textShadow = 'none';
   });
 
+  // When speed is null (timeline reached "now"), just un-highlight all
+  if (speed === null) {
+    _activeSpeedBtn = null;
+    return;
+  }
+
   // Find and highlight the matching speed button
   const targetBtn = Array.from(speedBtns).find(btn => parseFloat(btn.dataset.speed) === speed);
   if (targetBtn) {
@@ -183,6 +189,17 @@ export function setActiveSpeed(speed) {
     targetBtn.style.color = '#FFFFFF';
     targetBtn.style.textShadow = '0 0 8px ' + COLORS.primaryText;
     _activeSpeedBtn = targetBtn;
+  }
+}
+
+/** Set pause button to play icon ▶ (used when playback reaches "now"). */
+export function showPlayIcon() {
+  _paused = true;
+  const btn = el?.querySelector('#pause-btn');
+  if (btn) {
+    btn.textContent = '▶';
+    btn.style.borderColor = COLORS.success;
+    btn.style.color = COLORS.success;
   }
 }
 

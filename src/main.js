@@ -7,8 +7,6 @@ import { init as initPicker, setClickableObjects, onPicked } from './controls/Ra
 import { init as initLayers, registerLayer, toggleLayer, updateTimeRange, getAllLayerStates } from './layers/LayerManager.js';
 import { init as initUI, getAllComponents } from './ui/UIManager.js';
 import { LAYERS } from './config.js';
-
-// Data imports
 import flightsData from './data/flights.json';
 import gpsJammingData from './data/gps-jamming.json';
 import satellitesData from './data/satellites.json';
@@ -364,6 +362,11 @@ async function main() {
         if (playbackPosition >= TIME_WINDOW_HOURS) {
           playbackPosition = TIME_WINDOW_HOURS;
           isStopped = true;
+          playbackPlaying = false;
+          isPaused = false;
+          topBar.setPlaybackState(false);
+          bottomBar.setActiveSpeed(null);
+          bottomBar.resetPause();
           console.log('Timeline reached current time');
         }
 
