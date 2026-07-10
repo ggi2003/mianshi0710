@@ -51,19 +51,16 @@ export function create(scene, earthGroup, data) {
       line,
       marker,
     });
+    // Show immediately since flights are always visible
+    line.visible = true;
+    marker.visible = true;
   });
   earthGroup.add(group);
   return group;
 }
 
 export function update(timeRange) {
-  const start = timeRange?.start ?? -Infinity;
-  const end = timeRange?.end ?? Infinity;
-  entities.forEach(e => {
-    const visible = !Number.isNaN(e.timestamp) && e.timestamp >= start && e.timestamp <= end;
-    e.line.visible = visible;
-    e.marker.visible = visible;
-  });
+  // Flights are always visible regardless of time window
 }
 
 export function setVisible(visible) { if (group) group.visible = visible; }

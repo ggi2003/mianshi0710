@@ -34,19 +34,16 @@ export function create(scene, earthGroup, data) {
     group.add(dot);
 
     entities.push({ line, dot, timestamp: Date.parse(sat.timestamp) });
+    // Show immediately since satellites are always visible
+    line.visible = true;
+    dot.visible = true;
   });
   earthGroup.add(group);
   return group;
 }
 
 export function update(timeRange) {
-  const start = timeRange?.start ?? -Infinity;
-  const end = timeRange?.end ?? Infinity;
-  entities.forEach(e => {
-    const visible = !Number.isNaN(e.timestamp) && e.timestamp >= start && e.timestamp <= end;
-    e.line.visible = visible;
-    e.dot.visible = visible;
-  });
+  // Satellites are always visible regardless of time window
 }
 
 export function setVisible(visible) { if (group) group.visible = visible; }
