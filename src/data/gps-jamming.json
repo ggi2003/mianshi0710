@@ -478,5 +478,445 @@
     "intensity": 0.9,
     "radius": 54,
     "timestamp": "2026-07-10T12:14:00.000Z"
+  },
+  {
+    "id": "jam-061",
+    "lat": 38.99,
+    "lon": 129.84,
+    "intensity": 0.86,
+    "radius": 73,
+    "timestamp": "2026-07-03T23:48:00.000Z"
+  },
+  {
+    "id": "jam-062",
+    "lat": 22.68,
+    "lon": 117.31,
+    "intensity": 0.32,
+    "radius": 107,
+    "timestamp": "2026-07-09T09:05:00.000Z"
+  },
+  {
+    "id": "jam-063",
+    "lat": 50.4,
+    "lon": 30.11,
+    "intensity": 0.35,
+    "radius": 44,
+    "timestamp": "2026-07-09T13:49:00.000Z"
+  },
+  {
+    "id": "jam-064",
+    "lat": 10.03,
+    "lon": 48.58,
+    "intensity": 0.83,
+    "radius": 114,
+    "timestamp": "2026-07-03T16:30:00.000Z"
+  },
+  {
+    "id": "jam-065",
+    "lat": 13.66,
+    "lon": 39.93,
+    "intensity": 0.86,
+    "radius": 30,
+    "timestamp": "2026-07-09T06:03:00.000Z"
+  },
+  {
+    "id": "jam-066",
+    "lat": 31.84,
+    "lon": 120.36,
+    "intensity": 0.66,
+    "radius": 66,
+    "timestamp": "2026-07-06T09:16:00.000Z"
+  },
+  {
+    "id": "jam-067",
+    "lat": 24.6,
+    "lon": 64.86,
+    "intensity": 0.47,
+    "radius": 119,
+    "timestamp": "2026-07-03T00:08:00.000Z"
+  },
+  {
+    "id": "jam-068",
+    "lat": 46.55,
+    "lon": 35.9,
+    "intensity": 0.52,
+    "radius": 86,
+    "timestamp": "2026-07-05T10:56:00.000Z"
+  },
+  {
+    "id": "jam-069",
+    "lat": 56.86,
+    "lon": 22.75,
+    "intensity": 0.5,
+    "radius": 40,
+    "timestamp": "2026-07-08T09:40:00.000Z"
+  },
+  {
+    "id": "jam-070",
+    "lat": 33.21,
+    "lon": 47.61,
+    "intensity": 0.83,
+    "radius": 93,
+    "timestamp": "2026-07-10T00:26:00.000Z"
+  },
+  {
+    "id": "jam-071",
+    "lat": 36.52,
+    "lon": 127.31,
+    "intensity": 0.94,
+    "radius": 102,
+    "timestamp": "2026-07-07T21:36:00.000Z"
+  },
+  {
+    "id": "jam-072",
+    "lat": 22.96,
+    "lon": 112.29,
+    "intensity": 0.93,
+    "radius": 101,
+    "timestamp": "2026-07-04T20:13:00.000Z"
+  },
+  {
+    "id": "jam-073",
+    "lat": 48.07,
+    "lon": 33.94,
+    "intensity": 0.4,
+    "radius": 70,
+    "timestamp": "2026-07-04T19:12:00.000Z"
+  },
+  {
+    "id": "jam-074",
+    "lat": 11.8,
+    "lon": 48.04,
+    "intensity": 0.96,
+    "radius": 32,
+    "timestamp": "2026-07-09T20:14:00.000Z"
+  },
+  {
+    "id": "jam-075",
+    "lat": 14.15,
+    "lon": 42.59,
+    "intensity": 0.88,
+    "radius": 79,
+    "timestamp": "2026-07-05T12:26:00.000Z"
+  },
+  {
+    "id": "jam-076",
+    "lat": 32.08,
+    "lon": 121.03,
+    "intensity": 0.43,
+    "radius": 59,
+    "timestamp": "2026-07-05T14:42:00.000Z"
+  },
+  {
+    "id": "jam-077",
+    "lat": 22.06,
+    "lon": 68.46,
+    "intensity": 0.4,
+    "radius": 86,
+    "timestamp": "2026-07-03T09:55:00.000Z"
+  },
+  {
+    "id": "jam-078",
+    "lat": 46.6,
+    "lon": 33.46,
+    "intensity": 0.71,
+    "radius": 92,
+    "timestamp": "2026-07-06T23:01:00.000Z"
+  },
+  {
+    "id": "jam-079",
+    "lat": 55.04,
+    "lon": 22.77,
+    "intensity": 0.36,
+    "radius": 112,
+    "timestamp": "2026-07-07T09:38:00.000Z"
+  },
+  {
+    "id": "jam-080",
+    "lat": 32.23,
+    "lon": 48.05,
+    "intensity": 0.81,
+    "radius": 37,
+    "timestamp": "2026-07-04T23:19:00.000Z"
+  },
+  {
+    "id": "jam-081",
+    "lat": 38.67,
+    "lon": 128.83,
+    "intensity": 0.78,
+    "radius": 92,
+    "timestamp": "2026-07-04T05:58:00.000Z"
+  },
+  {
+    "id": "jam-082",
+    "lat": 23.94,
+    "lon": 113.78,
+    "intensity": 0.78,
+    "radius": 87,
+    "timestamp": "2026-07-03T14:17:00.000Z"
+  },
+  {
+    "id": "jam-083",
+    "lat": 48.23,
+    "lon": 32.77,
+    "intensity": 0.62,
+    "radius": 30,
+    "timestamp": "2026-07-10T15:41:00.000Z"
+  },
+  {
+    "id": "jam-084",
+    "lat": 8.94,
+    "lon": 47.73,
+    "intensity": 0.64,
+    "radius": 31,
+    "timestamp": "2026-07-08T11:39:00.000Z"
+  },
+  {
+    "id": "jam-085",
+    "lat": 16.77,
+    "lon": 39.89,
+    "intensity": 0.83,
+    "radius": 103,
+    "timestamp": "2026-07-10T01:52:00.000Z"
+  },
+  {
+    "id": "jam-086",
+    "lat": 13.85,
+    "lon": 48.88,
+    "intensity": 0.39,
+    "radius": 55,
+    "timestamp": "2026-07-07T04:30:00.000Z"
+  },
+  {
+    "id": "jam-087",
+    "lat": 36.57,
+    "lon": -2.27,
+    "intensity": 0.9,
+    "radius": 33,
+    "timestamp": "2026-07-09T17:34:00.000Z"
+  },
+  {
+    "id": "jam-088",
+    "lat": 39.79,
+    "lon": 26.73,
+    "intensity": 0.6,
+    "radius": 52,
+    "timestamp": "2026-07-09T13:50:00.000Z"
+  },
+  {
+    "id": "jam-089",
+    "lat": 56.04,
+    "lon": 13.08,
+    "intensity": 0.31,
+    "radius": 59,
+    "timestamp": "2026-07-07T02:52:00.000Z"
+  },
+  {
+    "id": "jam-090",
+    "lat": 30.46,
+    "lon": 33.26,
+    "intensity": 0.94,
+    "radius": 71,
+    "timestamp": "2026-07-09T13:30:00.000Z"
+  },
+  {
+    "id": "jam-091",
+    "lat": 5.33,
+    "lon": 100.18,
+    "intensity": 0.93,
+    "radius": 56,
+    "timestamp": "2026-07-03T07:47:00.000Z"
+  },
+  {
+    "id": "jam-092",
+    "lat": -13.46,
+    "lon": 35.48,
+    "intensity": 0.98,
+    "radius": 91,
+    "timestamp": "2026-07-06T17:28:00.000Z"
+  },
+  {
+    "id": "jam-093",
+    "lat": 9.33,
+    "lon": -71.61,
+    "intensity": 0.47,
+    "radius": 49,
+    "timestamp": "2026-07-03T09:21:00.000Z"
+  },
+  {
+    "id": "jam-094",
+    "lat": 63.08,
+    "lon": -16.99,
+    "intensity": 0.45,
+    "radius": 43,
+    "timestamp": "2026-07-08T02:22:00.000Z"
+  },
+  {
+    "id": "jam-095",
+    "lat": 43.63,
+    "lon": 40.77,
+    "intensity": 0.67,
+    "radius": 47,
+    "timestamp": "2026-07-10T22:05:00.000Z"
+  },
+  {
+    "id": "jam-096",
+    "lat": 25.36,
+    "lon": 34.91,
+    "intensity": 0.49,
+    "radius": 108,
+    "timestamp": "2026-07-09T05:00:00.000Z"
+  },
+  {
+    "id": "jam-097",
+    "lat": 7.95,
+    "lon": 76.4,
+    "intensity": 0.77,
+    "radius": 93,
+    "timestamp": "2026-07-03T04:18:00.000Z"
+  },
+  {
+    "id": "jam-098",
+    "lat": 1.98,
+    "lon": 105.21,
+    "intensity": 0.64,
+    "radius": 74,
+    "timestamp": "2026-07-09T20:55:00.000Z"
+  },
+  {
+    "id": "jam-099",
+    "lat": 53.65,
+    "lon": 5.99,
+    "intensity": 0.62,
+    "radius": 73,
+    "timestamp": "2026-07-10T20:12:00.000Z"
+  },
+  {
+    "id": "jam-100",
+    "lat": 18.05,
+    "lon": -66.33,
+    "intensity": 0.46,
+    "radius": 116,
+    "timestamp": "2026-07-03T14:08:00.000Z"
+  },
+  {
+    "id": "jam-101",
+    "lat": 12.71,
+    "lon": 49.77,
+    "intensity": 0.86,
+    "radius": 31,
+    "timestamp": "2026-07-05T15:57:00.000Z"
+  },
+  {
+    "id": "jam-102",
+    "lat": 37.85,
+    "lon": -2.05,
+    "intensity": 0.69,
+    "radius": 97,
+    "timestamp": "2026-07-03T22:46:00.000Z"
+  },
+  {
+    "id": "jam-103",
+    "lat": 38.86,
+    "lon": 26.28,
+    "intensity": 0.76,
+    "radius": 35,
+    "timestamp": "2026-07-04T08:36:00.000Z"
+  },
+  {
+    "id": "jam-104",
+    "lat": 55.72,
+    "lon": 15.66,
+    "intensity": 0.71,
+    "radius": 118,
+    "timestamp": "2026-07-06T03:31:00.000Z"
+  },
+  {
+    "id": "jam-105",
+    "lat": 30.08,
+    "lon": 33.44,
+    "intensity": 0.61,
+    "radius": 72,
+    "timestamp": "2026-07-09T07:00:00.000Z"
+  },
+  {
+    "id": "jam-106",
+    "lat": 6.16,
+    "lon": 100.1,
+    "intensity": 0.41,
+    "radius": 45,
+    "timestamp": "2026-07-09T18:01:00.000Z"
+  },
+  {
+    "id": "jam-107",
+    "lat": -10.64,
+    "lon": 38.45,
+    "intensity": 0.6,
+    "radius": 62,
+    "timestamp": "2026-07-09T20:36:00.000Z"
+  },
+  {
+    "id": "jam-108",
+    "lat": 9.45,
+    "lon": -71.84,
+    "intensity": 0.69,
+    "radius": 44,
+    "timestamp": "2026-07-03T15:11:00.000Z"
+  },
+  {
+    "id": "jam-109",
+    "lat": 65.45,
+    "lon": -17.02,
+    "intensity": 0.33,
+    "radius": 30,
+    "timestamp": "2026-07-03T03:50:00.000Z"
+  },
+  {
+    "id": "jam-110",
+    "lat": 42.15,
+    "lon": 41.22,
+    "intensity": 0.66,
+    "radius": 73,
+    "timestamp": "2026-07-06T09:54:00.000Z"
+  },
+  {
+    "id": "jam-111",
+    "lat": 25.33,
+    "lon": 35.12,
+    "intensity": 0.56,
+    "radius": 38,
+    "timestamp": "2026-07-05T14:28:00.000Z"
+  },
+  {
+    "id": "jam-112",
+    "lat": 7.21,
+    "lon": 77.03,
+    "intensity": 0.39,
+    "radius": 114,
+    "timestamp": "2026-07-05T20:49:00.000Z"
+  },
+  {
+    "id": "jam-113",
+    "lat": 2.53,
+    "lon": 105.66,
+    "intensity": 0.6,
+    "radius": 43,
+    "timestamp": "2026-07-09T03:05:00.000Z"
+  },
+  {
+    "id": "jam-114",
+    "lat": 52.04,
+    "lon": 4.86,
+    "intensity": 0.7,
+    "radius": 36,
+    "timestamp": "2026-07-06T11:56:00.000Z"
+  },
+  {
+    "id": "jam-115",
+    "lat": 18.79,
+    "lon": -65.57,
+    "intensity": 0.97,
+    "radius": 76,
+    "timestamp": "2026-07-08T08:45:00.000Z"
   }
 ]

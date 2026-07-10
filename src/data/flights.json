@@ -1,18 +1,5 @@
 [
   {
-    "flightId": "TUR729",
-    "airline": "Turkish Airlines",
-    "from": {
-      "lat": 24.43,
-      "lon": 54.65
-    },
-    "to": {
-      "lat": 13.75,
-      "lon": 100.5
-    },
-    "timestamp": "2026-07-04T03:12:00.000Z"
-  },
-  {
     "flightId": "QAT797",
     "airline": "Qatar Airways",
     "from": {
@@ -39,19 +26,6 @@
     "timestamp": "2026-07-04T07:40:00.000Z"
   },
   {
-    "flightId": "EMI792",
-    "airline": "Emirates",
-    "from": {
-      "lat": 35.69,
-      "lon": 51.39
-    },
-    "to": {
-      "lat": 13.75,
-      "lon": 100.5
-    },
-    "timestamp": "2026-07-05T02:58:00.000Z"
-  },
-  {
     "flightId": "EMI277",
     "airline": "Emirates",
     "from": {
@@ -63,19 +37,6 @@
       "lon": 18.42
     },
     "timestamp": "2026-07-05T10:38:00.000Z"
-  },
-  {
-    "flightId": "QAT887",
-    "airline": "Qatar Airways",
-    "from": {
-      "lat": 25.27,
-      "lon": 51.61
-    },
-    "to": {
-      "lat": 51.47,
-      "lon": -0.45
-    },
-    "timestamp": "2026-07-05T10:51:00.000Z"
   },
   {
     "flightId": "GUL804",
@@ -104,32 +65,6 @@
     "timestamp": "2026-07-05T20:25:00.000Z"
   },
   {
-    "flightId": "QAT185",
-    "airline": "Qatar Airways",
-    "from": {
-      "lat": 26.27,
-      "lon": 50.63
-    },
-    "to": {
-      "lat": 51.47,
-      "lon": -0.45
-    },
-    "timestamp": "2026-07-06T13:58:00.000Z"
-  },
-  {
-    "flightId": "IRA725",
-    "airline": "Iran Air",
-    "from": {
-      "lat": 24.43,
-      "lon": 54.65
-    },
-    "to": {
-      "lat": 52.31,
-      "lon": 4.76
-    },
-    "timestamp": "2026-07-07T13:40:00.000Z"
-  },
-  {
     "flightId": "OMA926",
     "airline": "Oman Air",
     "from": {
@@ -143,19 +78,6 @@
     "timestamp": "2026-07-07T14:22:00.000Z"
   },
   {
-    "flightId": "EMI868",
-    "airline": "Emirates",
-    "from": {
-      "lat": 23.59,
-      "lon": 58.28
-    },
-    "to": {
-      "lat": 52.31,
-      "lon": 4.76
-    },
-    "timestamp": "2026-07-07T15:37:00.000Z"
-  },
-  {
     "flightId": "TUR135",
     "airline": "Turkish Airlines",
     "from": {
@@ -167,32 +89,6 @@
       "lon": -0.45
     },
     "timestamp": "2026-07-07T16:10:00.000Z"
-  },
-  {
-    "flightId": "GUL843",
-    "airline": "Gulf Air",
-    "from": {
-      "lat": 23.59,
-      "lon": 58.28
-    },
-    "to": {
-      "lat": 52.31,
-      "lon": 4.76
-    },
-    "timestamp": "2026-07-08T01:12:00.000Z"
-  },
-  {
-    "flightId": "EGY584",
-    "airline": "EgyptAir",
-    "from": {
-      "lat": 26.27,
-      "lon": 50.63
-    },
-    "to": {
-      "lat": 13.75,
-      "lon": 100.5
-    },
-    "timestamp": "2026-07-08T04:14:00.000Z"
   },
   {
     "flightId": "GUL926",
@@ -221,19 +117,6 @@
     "timestamp": "2026-07-08T08:59:00.000Z"
   },
   {
-    "flightId": "GUL559",
-    "airline": "Gulf Air",
-    "from": {
-      "lat": 26.27,
-      "lon": 50.63
-    },
-    "to": {
-      "lat": 13.75,
-      "lon": 100.5
-    },
-    "timestamp": "2026-07-08T15:11:00.000Z"
-  },
-  {
     "flightId": "SAU100",
     "airline": "Saudia",
     "from": {
@@ -245,19 +128,6 @@
       "lon": 121.47
     },
     "timestamp": "2026-07-08T21:31:00.000Z"
-  },
-  {
-    "flightId": "GUL936",
-    "airline": "Gulf Air",
-    "from": {
-      "lat": 35.69,
-      "lon": 51.39
-    },
-    "to": {
-      "lat": 51.47,
-      "lon": -0.45
-    },
-    "timestamp": "2026-07-09T01:33:00.000Z"
   },
   {
     "flightId": "OMA139",
@@ -284,32 +154,6 @@
       "lon": 139.77
     },
     "timestamp": "2026-07-10T00:53:00.000Z"
-  },
-  {
-    "flightId": "IRA579",
-    "airline": "Iran Air",
-    "from": {
-      "lat": 30.12,
-      "lon": 31.41
-    },
-    "to": {
-      "lat": 33.72,
-      "lon": 73.09
-    },
-    "timestamp": "2026-07-10T07:59:00.000Z"
-  },
-  {
-    "flightId": "EMI441",
-    "airline": "Emirates",
-    "from": {
-      "lat": 24.43,
-      "lon": 54.65
-    },
-    "to": {
-      "lat": 48.85,
-      "lon": 2.35
-    },
-    "timestamp": "2026-07-10T10:22:00.000Z"
   },
   {
     "flightId": "EMI658",

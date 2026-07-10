@@ -17,7 +17,8 @@ export function create(scene, earthGroup, data) {
     const circle = new THREE.Mesh(geo, mat);
     circle.position.copy(pos);
     circle.lookAt(new THREE.Vector3(0, 0, 0));
-    circle.visible = false;
+    // Show immediately — GPS jamming is always visible like other layers
+    circle.visible = true;
     group.add(circle);
     entities.push({
       circle,
@@ -29,11 +30,7 @@ export function create(scene, earthGroup, data) {
 }
 
 export function update(timeRange) {
-  const start = timeRange?.start ?? -Infinity;
-  const end = timeRange?.end ?? Infinity;
-  entities.forEach(e => {
-    e.circle.visible = !Number.isNaN(e.timestamp) && e.timestamp >= start && e.timestamp <= end;
-  });
+  // GPS jamming is always visible regardless of time window
 }
 
 export function setVisible(visible) { if (group) group.visible = visible; }

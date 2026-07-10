@@ -808,5 +808,500 @@
     "lon": 44.26,
     "timestamp": "2026-07-10T15:50:00.000Z",
     "severity": "LOW"
+  },
+  {
+    "id": "evt-091",
+    "type": "missile_launch",
+    "name": "Border Crossing Alert near South China Sea",
+    "lat": 21.56,
+    "lon": 111.1,
+    "timestamp": "2026-07-06T06:45:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-092",
+    "type": "missile_launch",
+    "name": "Pipeline Sabotage near Taiwan Strait",
+    "lat": 23.23,
+    "lon": 121.23,
+    "timestamp": "2026-07-10T05:56:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-093",
+    "type": "maritime_incident",
+    "name": "ATC Cyber Attack near East China Sea",
+    "lat": 31.41,
+    "lon": 128.33,
+    "timestamp": "2026-07-07T00:39:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-094",
+    "type": "airspace_closure",
+    "name": "Coastal Radar Anomaly near North Korea",
+    "lat": 40.93,
+    "lon": 130.36,
+    "timestamp": "2026-07-07T17:56:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-095",
+    "type": "gps_interference",
+    "name": "No-Fly Zone Activated near Ukraine",
+    "lat": 46.58,
+    "lon": 36.36,
+    "timestamp": "2026-07-06T01:11:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-096",
+    "type": "intel_report",
+    "name": "Emergency Airspace Closure near Baltic Sea",
+    "lat": 54.62,
+    "lon": 18.9,
+    "timestamp": "2026-07-03T20:08:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-097",
+    "type": "cyber_attack",
+    "name": "Satellite Signal Loss near Black Sea",
+    "lat": 44.36,
+    "lon": 39.36,
+    "timestamp": "2026-07-05T07:24:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-098",
+    "type": "infrastructure_attack",
+    "name": "Chemical Plume Detected near South Sudan",
+    "lat": 9.13,
+    "lon": 29.9,
+    "timestamp": "2026-07-09T04:06:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-099",
+    "type": "satellite_maneuver",
+    "name": "Unidentified Aircraft Violation near West Africa",
+    "lat": 9.37,
+    "lon": -7.53,
+    "timestamp": "2026-07-03T01:59:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-100",
+    "type": "troop_movement",
+    "name": "Port Closure Order near Somalia Coast",
+    "lat": 8.85,
+    "lon": 47.97,
+    "timestamp": "2026-07-05T05:12:00.000Z",
+    "severity": "LOW"
+  },
+  {
+    "id": "evt-101",
+    "type": "maritime_incident",
+    "name": "Pipeline Sabotage near Venezuela",
+    "lat": 8.12,
+    "lon": -68.12,
+    "timestamp": "2026-07-10T02:23:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-102",
+    "type": "internet_blackout",
+    "name": "Satellite Signal Loss near Myanmar",
+    "lat": 18.06,
+    "lon": 97.92,
+    "timestamp": "2026-07-05T04:27:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-103",
+    "type": "gps_interference",
+    "name": "Emergency Airspace Closure near Afghanistan",
+    "lat": 34.07,
+    "lon": 67.89,
+    "timestamp": "2026-07-05T04:19:00.000Z",
+    "severity": "LOW"
+  },
+  {
+    "id": "evt-104",
+    "type": "diplomatic_incident",
+    "name": "Submarine Detection near Arctic",
+    "lat": 73.23,
+    "lon": 31.98,
+    "timestamp": "2026-07-08T03:19:00.000Z",
+    "severity": "LOW"
+  },
+  {
+    "id": "evt-105",
+    "type": "intel_report",
+    "name": "Embassy Security Alert near Indian Ocean",
+    "lat": 0.71,
+    "lon": 71.89,
+    "timestamp": "2026-07-07T07:06:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-106",
+    "type": "troop_movement",
+    "name": "Embassy Security Alert near South China Sea",
+    "lat": 20.42,
+    "lon": 110.2,
+    "timestamp": "2026-07-04T15:58:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-107",
+    "type": "satellite_maneuver",
+    "name": "Chemical Plume Detected near Taiwan Strait",
+    "lat": 25.56,
+    "lon": 119.8,
+    "timestamp": "2026-07-06T19:19:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-108",
+    "type": "internet_blackout",
+    "name": "Pipeline Sabotage near East China Sea",
+    "lat": 30.16,
+    "lon": 128.02,
+    "timestamp": "2026-07-07T07:11:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-109",
+    "type": "intel_report",
+    "name": "Coastal Radar Anomaly near North Korea",
+    "lat": 41.18,
+    "lon": 129.66,
+    "timestamp": "2026-07-08T15:45:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-110",
+    "type": "cyber_attack",
+    "name": "Unidentified Aircraft Violation near Ukraine",
+    "lat": 50.49,
+    "lon": 32.55,
+    "timestamp": "2026-07-06T00:55:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-111",
+    "type": "satellite_maneuver",
+    "name": "Emergency Airspace Closure near Baltic Sea",
+    "lat": 58.19,
+    "lon": 20.32,
+    "timestamp": "2026-07-04T17:41:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-112",
+    "type": "naval_exercise",
+    "name": "Border Crossing Alert near Black Sea",
+    "lat": 44.35,
+    "lon": 39.3,
+    "timestamp": "2026-07-06T16:52:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-113",
+    "type": "infrastructure_attack",
+    "name": "Satellite Signal Loss near South Sudan",
+    "lat": 4.49,
+    "lon": 29.68,
+    "timestamp": "2026-07-04T11:18:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-114",
+    "type": "airspace_violation",
+    "name": "Unidentified Aircraft Violation near West Africa",
+    "lat": 6.17,
+    "lon": -1.93,
+    "timestamp": "2026-07-03T23:28:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-115",
+    "type": "missile_launch",
+    "name": "Military Convoy Movement near Somalia Coast",
+    "lat": 5.31,
+    "lon": 51.2,
+    "timestamp": "2026-07-09T05:54:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-116",
+    "type": "missile_launch",
+    "name": "Unidentified Subsurface Contact near Gulf of Aden",
+    "lat": 14.25,
+    "lon": 47.68,
+    "timestamp": "2026-07-05T11:48:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-117",
+    "type": "maritime_incident",
+    "name": "Radio Signal Anomaly near Bering Strait",
+    "lat": 64.96,
+    "lon": -169.05,
+    "timestamp": "2026-07-06T23:57:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-118",
+    "type": "infrastructure_attack",
+    "name": "Port Closure Order near Strait of Malacca",
+    "lat": 4.47,
+    "lon": 103.92,
+    "timestamp": "2026-07-07T15:17:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-119",
+    "type": "troop_movement",
+    "name": "Chemical Plume Detected near Gibraltar",
+    "lat": 35.71,
+    "lon": -4.35,
+    "timestamp": "2026-07-10T13:30:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-120",
+    "type": "internet_blackout",
+    "name": "Emergency Airspace Closure near Suez Canal",
+    "lat": 29.67,
+    "lon": 32.81,
+    "timestamp": "2026-07-10T22:05:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-121",
+    "type": "gps_interference",
+    "name": "Cyber Attack on Port Systems near Caspian Sea",
+    "lat": 41.04,
+    "lon": 51.86,
+    "timestamp": "2026-07-10T21:17:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-122",
+    "type": "troop_movement",
+    "name": "Chemical Plume Detected near Mediterranean",
+    "lat": 35.22,
+    "lon": 17.11,
+    "timestamp": "2026-07-03T20:07:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-123",
+    "type": "naval_exercise",
+    "name": "Port Closure Order near Persian Gulf",
+    "lat": 25.76,
+    "lon": 51.96,
+    "timestamp": "2026-07-08T00:07:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-124",
+    "type": "airspace_closure",
+    "name": "Anti-Satellite Test Debris near Red Sea",
+    "lat": 23.43,
+    "lon": 35.25,
+    "timestamp": "2026-07-09T20:12:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-125",
+    "type": "internet_blackout",
+    "name": "Coastal Radar Anomaly near Caribbean",
+    "lat": 15.46,
+    "lon": -77.43,
+    "timestamp": "2026-07-03T19:42:00.000Z",
+    "severity": "LOW"
+  },
+  {
+    "id": "evt-126",
+    "type": "diplomatic_incident",
+    "name": "Maritime Exclusion Zone near Gulf of Guinea",
+    "lat": 0.53,
+    "lon": 1.82,
+    "timestamp": "2026-07-03T20:57:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-127",
+    "type": "satellite_maneuver",
+    "name": "Submarine Detection near Arabian Sea",
+    "lat": 14.46,
+    "lon": 62.25,
+    "timestamp": "2026-07-10T20:31:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-128",
+    "type": "naval_exercise",
+    "name": "Electronic Warfare Signal near Bay of Bengal",
+    "lat": 14.47,
+    "lon": 84.33,
+    "timestamp": "2026-07-09T00:02:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-129",
+    "type": "internet_blackout",
+    "name": "Drone Swarm Activity near Sea of Japan",
+    "lat": 41.91,
+    "lon": 138.22,
+    "timestamp": "2026-07-10T15:31:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-130",
+    "type": "airspace_closure",
+    "name": "Suspicious Vessel Detected near English Channel",
+    "lat": 49.75,
+    "lon": -0.33,
+    "timestamp": "2026-07-05T16:49:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-131",
+    "type": "maritime_incident",
+    "name": "Maritime Exclusion Zone near South Atlantic",
+    "lat": -25.39,
+    "lon": -29.88,
+    "timestamp": "2026-07-08T17:00:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-132",
+    "type": "airspace_violation",
+    "name": "Satellite Signal Loss near Philippine Sea",
+    "lat": 12.9,
+    "lon": 127.79,
+    "timestamp": "2026-07-10T04:29:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-133",
+    "type": "naval_exercise",
+    "name": "Coastal Radar Anomaly near Andaman Sea",
+    "lat": 11.01,
+    "lon": 96.96,
+    "timestamp": "2026-07-09T12:07:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-134",
+    "type": "cyber_attack",
+    "name": "Coastal Radar Anomaly near Mozambique Channel",
+    "lat": -16,
+    "lon": 42,
+    "timestamp": "2026-07-05T12:45:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-135",
+    "type": "satellite_maneuver",
+    "name": "Underwater Cable Damage near Sulu Sea",
+    "lat": 8.74,
+    "lon": 118.76,
+    "timestamp": "2026-07-03T05:00:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-136",
+    "type": "internet_blackout",
+    "name": "Unidentified Subsurface Contact near Gulf of Aden",
+    "lat": 13.98,
+    "lon": 45.93,
+    "timestamp": "2026-07-09T10:06:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-137",
+    "type": "airspace_closure",
+    "name": "Satellite Signal Loss near Bering Strait",
+    "lat": 64.42,
+    "lon": -169.1,
+    "timestamp": "2026-07-07T22:36:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-138",
+    "type": "intel_report",
+    "name": "ATC Cyber Attack near Strait of Malacca",
+    "lat": 5.07,
+    "lon": 97.38,
+    "timestamp": "2026-07-06T12:02:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-139",
+    "type": "troop_movement",
+    "name": "Drone Swarm Activity near Gibraltar",
+    "lat": 36.76,
+    "lon": -4.59,
+    "timestamp": "2026-07-04T06:24:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-140",
+    "type": "intel_report",
+    "name": "Border Crossing Alert near Suez Canal",
+    "lat": 29.37,
+    "lon": 33.87,
+    "timestamp": "2026-07-10T14:08:00.000Z",
+    "severity": "CRITICAL"
+  },
+  {
+    "id": "evt-141",
+    "type": "gps_interference",
+    "name": "Underwater Cable Damage near Caspian Sea",
+    "lat": 39.25,
+    "lon": 50.38,
+    "timestamp": "2026-07-09T13:50:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-142",
+    "type": "diplomatic_incident",
+    "name": "Chemical Plume Detected near Mediterranean",
+    "lat": 34.79,
+    "lon": 18.72,
+    "timestamp": "2026-07-08T04:53:00.000Z",
+    "severity": "HIGH"
+  },
+  {
+    "id": "evt-143",
+    "type": "naval_exercise",
+    "name": "Underwater Cable Damage near Persian Gulf",
+    "lat": 24.54,
+    "lon": 50.22,
+    "timestamp": "2026-07-07T00:24:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-144",
+    "type": "gps_interference",
+    "name": "Satellite Signal Loss near Red Sea",
+    "lat": 21.45,
+    "lon": 39.56,
+    "timestamp": "2026-07-09T15:33:00.000Z",
+    "severity": "MEDIUM"
+  },
+  {
+    "id": "evt-145",
+    "type": "airspace_closure",
+    "name": "Unidentified Aircraft Violation near Caribbean",
+    "lat": 14.4,
+    "lon": -71.2,
+    "timestamp": "2026-07-08T21:40:00.000Z",
+    "severity": "CRITICAL"
   }
 ]
