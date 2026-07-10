@@ -27,6 +27,10 @@ const dataMap = {
   'intel-events': intelEventsData,
 };
 
+function getPlaybackCursorTime(position, baseTime = Date.now()) {
+  return baseTime - (168 - position) * 3600000;
+}
+
 async function main() {
   const container = document.getElementById('canvas-container');
   if (!container) return;
@@ -84,6 +88,7 @@ async function main() {
 
   // Time playback system variables (must be defined before use)
   const TIME_WINDOW_HOURS = 168; // 7 days
+  const playbackWindowStart = Date.now() - TIME_WINDOW_HOURS * 3600000;
   let currentPlaybackTime = Date.now();
   let playbackSpeed = 1;
   let isPaused = false;
@@ -92,6 +97,25 @@ async function main() {
 
   // Playback state
   let playbackPlaying = false;
+  let activeEventIds = new Set();
+
+  function syncVisibleEvents(start, end) {
+    const visibleEvents = intelEventsData
+      .filter(event => {
+        const timestamp = Date.parse(event.timestamp);
+        return !Number.isNaN(timestamp) && timestamp >= start && timestamp <= end;
+      })
+      .sort((a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp));
+
+    const nextVisibleIds = new Set(visibleEvents.map(event => event.id));
+    const newlyVisibleEvents = visibleEvents.filter(event => !activeEventIds.has(event.id));
+    if (newlyVisibleEvents.length > 0) {
+      const targetEvent = newlyVisibleEvents[0];
+      flyTo(earthGroup, targetEvent.lat, targetEvent.lon, 2.4);
+    }
+    activeEventIds = nextVisibleIds;
+  }
+
   topBar.on('playback-click', () => {
     playbackPlaying = !playbackPlaying;
     topBar.setPlaybackState(playbackPlaying);
@@ -141,6 +165,8 @@ async function main() {
     currentPlaybackTime = now;
     playbackPosition = TIME_WINDOW_HOURS;
     updateTimeRange(now - TIME_WINDOW_HOURS * 3600000, now);
+    intelMod?.setCurrentPlaybackTime?.({ start: now - TIME_WINDOW_HOURS * 3600000, end: now });
+    activeEventIds = new Set();
     // Reset slider to NOW position
     bottomBar.setTimelinePosition(TIME_WINDOW_HOURS);
     console.log('Timeline stopped and reset to current time');
@@ -192,11 +218,14 @@ async function main() {
   // Timeline
   bottomBar.on('time-change', ({ hour }) => {
     const now = Date.now();
-    const start = now - (TIME_WINDOW_HOURS - hour) * 3600000;
-    updateTimeRange(start, now);
+    const cursorTime = getPlaybackCursorTime(hour, now);
+    const start = playbackWindowStart + hour * 3600000;
+    updateTimeRange(start, cursorTime);
+    intelMod?.setCurrentPlaybackTime?.({ start, end: cursorTime });
+    syncVisibleEvents(start, cursorTime);
     // Update playback position
     playbackPosition = hour;
-    currentPlaybackTime = now;
+    currentPlaybackTime = cursorTime;
     // Update slider visual position
     bottomBar.setTimelinePosition(hour);
   });
@@ -229,6 +258,11 @@ async function main() {
     updateCamera();
     renderPP();
 
+    const isPlaybackActive = !isStopped && !isPaused;
+    if (earthGroup) {
+      earthGroup.rotation.y += isPlaybackActive ? 0.0012 : 0.0003;
+    }
+
     // Time playback logic
     if (!isStopped && !isPaused) {
       // Advance playback time based on speed
@@ -249,8 +283,11 @@ async function main() {
 
       // Update time range
       const now = Date.now();
-      const start = now - (TIME_WINDOW_HOURS - playbackPosition) * 3600000;
-      updateTimeRange(start, now);
+      const cursorTime = getPlaybackCursorTime(playbackPosition, now);
+      const start = playbackWindowStart + playbackPosition * 3600000;
+      updateTimeRange(start, cursorTime);
+      intelMod?.setCurrentPlaybackTime?.({ start, end: cursorTime });
+      syncVisibleEvents(start, cursorTime);
 
       // Update slider visual position
       bottomBar.setTimelinePosition(playbackPosition);
@@ -291,6 +328,9 @@ async function main() {
   topBar.setPlaybackState(true); // Update UI button text to "播放中"
   bottomBar.setTimelinePosition(0); // Update slider to beginning
   bottomBar.setActiveSpeed(12000); // Highlight 200h/x button
+  const initialCursorTime = getPlaybackCursorTime(0, Date.now());
+  intelMod?.setCurrentPlaybackTime?.({ start: playbackWindowStart, end: initialCursorTime });
+  syncVisibleEvents(playbackWindowStart, initialCursorTime);
   console.log('Auto-start playback from position 0 with speed 200h/x');
 }
 

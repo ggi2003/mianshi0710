@@ -2,12 +2,27 @@ import * as THREE from 'three';
 import { latLonToVec3 } from '../utils/math.js';
 import { EARTH_RADIUS } from '../config.js';
 
-let group, markers;
+let group, markers, currentPlaybackTime, currentTimeRange, eventData;
+
+function updateMarkerVisibility() {
+  const start = currentTimeRange?.start ?? -Infinity;
+  const end = currentTimeRange?.end ?? currentPlaybackTime ?? Date.now();
+  (markers || []).forEach(marker => {
+    const event = marker.userData?.event;
+    const timestamp = event ? Date.parse(event.timestamp) : NaN;
+    const isVisible = !Number.isNaN(timestamp) && timestamp >= start && timestamp <= end;
+    marker.visible = isVisible;
+    if (marker.userData?.sprite) {
+      marker.userData.sprite.visible = isVisible;
+    }
+  });
+}
 
 export function create(scene, earthGroup, data) {
   group = new THREE.Group();
   markers = [];
-  data.forEach(event => {
+  eventData = data || [];
+  eventData.forEach(event => {
     const raw = latLonToVec3(event.lat, event.lon, EARTH_RADIUS * 1.04);
     const pos = new THREE.Vector3(raw.x, raw.y, raw.z);
     const color = event.severity === 'CRITICAL' ? 0xFF1744 : event.severity === 'HIGH' ? 0xFF9800 : 0xFFEB3B;
@@ -18,14 +33,17 @@ export function create(scene, earthGroup, data) {
     const cone = new THREE.Mesh(coneGeo, coneMat);
     cone.position.copy(pos);
     cone.lookAt(new THREE.Vector3(0, 0, 0));
-    cone.userData = { eventId: event.id, event };
+    cone.visible = false;
 
     // Glow sprite
     const spriteMat = new THREE.SpriteMaterial({ color, transparent: true, opacity: 0.6 });
     const sprite = new THREE.Sprite(spriteMat);
     sprite.position.copy(pos);
     sprite.scale.set(1.5, 1.5, 1);
-    sprite.userData = { eventId: event.id, event };
+    sprite.visible = false;
+
+    cone.userData = { eventId: event.id, event, sprite };
+    sprite.userData = { eventId: event.id, event, marker: cone };
 
     group.add(cone);
     group.add(sprite);
@@ -40,7 +58,23 @@ export function getEventById(id) {
   return markers ? markers.find(m => m.userData?.eventId === id)?.userData?.event || null : null;
 }
 
-export function update(timeRange) {}
+export function update(timeRange) {
+  currentTimeRange = timeRange || currentTimeRange || { start: null, end: Date.now() };
+  currentPlaybackTime = currentTimeRange?.end ?? currentPlaybackTime ?? Date.now();
+  updateMarkerVisibility();
+}
+
+export function setCurrentPlaybackTime(timeRange) {
+  if (typeof timeRange === 'number') {
+    currentTimeRange = { start: null, end: timeRange };
+    currentPlaybackTime = timeRange;
+  } else {
+    currentTimeRange = timeRange || currentTimeRange || { start: null, end: Date.now() };
+    currentPlaybackTime = currentTimeRange?.end ?? currentPlaybackTime ?? Date.now();
+  }
+  updateMarkerVisibility();
+}
+
 export function setVisible(visible) { if (group) group.visible = visible; }
 export function dispose() {
   if (group) {
@@ -48,5 +82,8 @@ export function dispose() {
     group.parent?.remove(group);
     group = null;
     markers = null;
+    currentPlaybackTime = null;
+    currentTimeRange = null;
+    eventData = null;
   }
 }
