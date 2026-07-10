@@ -146,7 +146,8 @@ async function main() {
     const allLayerCount = Object.values(getAllLayerStates()).filter(s => s.visible).length;
 
     // Right panel — detailed event list + counts
-    rightPanel.updateForPlaybackTime(cursorTime, visibleEvents, { critical: critCount, high: highCount, medium: medCount });
+    const isNow = position >= TIME_WINDOW_HOURS;
+    rightPanel.updateForPlaybackTime(cursorTime, visibleEvents, { critical: critCount, high: highCount, medium: medCount }, isNow);
 
     // Left panel — threat status, data summary
     leftPanel.updateForPlaybackTime(cursorTime, visibleEvents);
@@ -368,6 +369,11 @@ async function main() {
 
         tickPlaybackState(playbackPosition);
       }
+    }
+
+    // When stopped at "now", keep the clock ticking live
+    if (isStopped && !isPaused && playbackPosition >= TIME_WINDOW_HOURS) {
+      tickPlaybackState(TIME_WINDOW_HOURS);
     }
 
     lastFrameTime = time;

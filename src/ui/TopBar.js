@@ -51,15 +51,16 @@ export function setPlaybackState(isPlaying) {
 
 /**
  * Push playback-time-reactive data into the top bar.
- * @param {number} cursorMs   current playback time (ms)
+ * tb-cursor-time always shows the current system clock.
+ * @param {number} cursorMs   current playback time (ms) — NOT used for clock
  * @param {Array}  events     visible intel events
  */
 export function updateForPlaybackTime(cursorMs, events) {
   if (!el) return;
 
-  // Time
+  // Always show live system clock, not playback time
   const timeEl = el.querySelector('#tb-cursor-time');
-  if (timeEl) timeEl.textContent = formatBeijingShort(cursorMs) + ' BJT';
+  if (timeEl) timeEl.textContent = formatBeijingShort(Date.now()) + ' BJT';
 
   // Threat badge
   const badge = el.querySelector('#tb-threat-badge');

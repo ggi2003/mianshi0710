@@ -49,16 +49,20 @@ export function init(container) {
 
 /**
  * Update the right panel for a specific playback time.
- * @param {number} cursorMs  — current playback cursor (ms since epoch)
- * @param {Array} [events]   — visible intel events at this time
- * @param {Object} [counts]  — { critical, high, medium, low }
+ * rp-rec-line shows the playback TIME_WINDOW time.
+ * When the timeline reaches "now" (position >= 168h), it shows current system time.
+ * @param {number} cursorMs        — current playback cursor (ms since epoch)
+ * @param {boolean} isNow           — true when the timeline is at "now"
+ * @param {Array} [events]          — visible intel events at this time
+ * @param {Object} [counts]         — { critical, high, medium, low }
  */
-export function updateForPlaybackTime(cursorMs, events, counts) {
+export function updateForPlaybackTime(cursorMs, events, counts, isNow) {
   if (!el) return;
 
-  // 1. REC line
+  // 1. REC line — shows playback time, or real-time clock only when "now"
+  const recTime = isNow ? Date.now() : cursorMs;
   const recLine = el.querySelector('#rp-rec-line');
-  if (recLine) recLine.textContent = 'REC ' + formatBeijingTime(cursorMs);
+  if (recLine) recLine.textContent = 'REC ' + formatBeijingTime(recTime);
 
   // 2. Event list
   const list = el.querySelector('#rp-events-list');
