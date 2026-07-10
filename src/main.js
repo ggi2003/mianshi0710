@@ -366,7 +366,7 @@ async function main() {
           isPaused = false;
           topBar.setPlaybackState(false);
           bottomBar.setActiveSpeed(null);
-          bottomBar.resetPause();
+          bottomBar.showPlayIcon();
           console.log('Timeline reached current time');
         }
 
