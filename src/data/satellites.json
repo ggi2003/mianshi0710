@@ -8,27 +8,11 @@
     "timestamp": "2026-07-04T00:00:00Z"
   },
   {
-    "name": "COSMOS-2542",
-    "inclination": 22.2,
-    "altitude": 505,
-    "phase": 0.45,
-    "period": 1427.8,
-    "timestamp": "2026-07-04T00:00:00Z"
-  },
-  {
     "name": "AEHF-4",
     "inclination": 99.9,
     "altitude": 600,
     "phase": 0.79,
     "period": 264.9,
-    "timestamp": "2026-07-04T00:00:00Z"
-  },
-  {
-    "name": "YAOGAN-30J",
-    "inclination": 1.3,
-    "altitude": 550,
-    "phase": 0.29,
-    "period": 182.3,
     "timestamp": "2026-07-04T00:00:00Z"
   },
   {
@@ -40,27 +24,11 @@
     "timestamp": "2026-07-04T00:00:00Z"
   },
   {
-    "name": "GEO-KOMPSAT-2B",
-    "inclination": 5.1,
-    "altitude": 20200,
-    "phase": 0.39,
-    "period": 830.2,
-    "timestamp": "2026-07-04T00:00:00Z"
-  },
-  {
     "name": "OFEQ-16",
     "inclination": 75.3,
     "altitude": 35786,
     "phase": 0.34,
     "period": 213.7,
-    "timestamp": "2026-07-04T00:00:00Z"
-  },
-  {
-    "name": "NAVSTAR-78",
-    "inclination": 2.6,
-    "altitude": 505,
-    "phase": 0.46,
-    "period": 350.3,
     "timestamp": "2026-07-04T00:00:00Z"
   },
   {
@@ -72,27 +40,11 @@
     "timestamp": "2026-07-04T00:00:00Z"
   },
   {
-    "name": "GAOFEN-14",
-    "inclination": 110.4,
-    "altitude": 400,
-    "phase": 1,
-    "period": 270.5,
-    "timestamp": "2026-07-04T00:00:00Z"
-  },
-  {
     "name": "INTELSAT-39",
     "inclination": 133.8,
     "altitude": 35790,
     "phase": 0.6,
     "period": 164.2,
-    "timestamp": "2026-07-04T00:00:00Z"
-  },
-  {
-    "name": "SBIRS-GEO-5",
-    "inclination": 120.5,
-    "altitude": 600,
-    "phase": 0.24,
-    "period": 964.6,
     "timestamp": "2026-07-04T00:00:00Z"
   },
   {
@@ -104,27 +56,11 @@
     "timestamp": "2026-07-04T00:00:00Z"
   },
   {
-    "name": "GLONASS-M59",
-    "inclination": 129.3,
-    "altitude": 505,
-    "phase": 0.72,
-    "period": 419.1,
-    "timestamp": "2026-07-04T00:00:00Z"
-  },
-  {
     "name": "GALILEO-FOC10",
     "inclination": 59.4,
     "altitude": 480,
     "phase": 0.33,
     "period": 247,
-    "timestamp": "2026-07-04T00:00:00Z"
-  },
-  {
-    "name": "KOREASAT-7",
-    "inclination": 159.6,
-    "altitude": 480,
-    "phase": 0.15,
-    "period": 1237,
     "timestamp": "2026-07-04T00:00:00Z"
   },
   {
@@ -136,27 +72,11 @@
     "timestamp": "2026-07-04T00:00:00Z"
   },
   {
-    "name": "AZERSPACE-2",
-    "inclination": 28.6,
-    "altitude": 480,
-    "phase": 0.98,
-    "period": 528.5,
-    "timestamp": "2026-07-04T00:00:00Z"
-  },
-  {
     "name": "TELKOM-4",
     "inclination": 142.8,
     "altitude": 505,
     "phase": 0.59,
     "period": 764,
-    "timestamp": "2026-07-04T00:00:00Z"
-  },
-  {
-    "name": "THAICOM-8",
-    "inclination": 39.3,
-    "altitude": 505,
-    "phase": 0.88,
-    "period": 310,
     "timestamp": "2026-07-04T00:00:00Z"
   }
 ]
