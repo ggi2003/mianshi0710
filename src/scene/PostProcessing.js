@@ -1,5 +1,7 @@
-let renderer, scene, camera, params;
-params = { mode: 'normal', glow: 1.0, sharpen: 0.3, hue: 0 };
+import * as THREE from 'three';
+import { setMode as setEarthMode, setGlow as setEarthGlow, setSharpen as setEarthSharpen, setHue as setEarthHue } from './Earth.js';
+
+let renderer, scene, camera;
 
 export function init(rend, sc, cam) {
   renderer = rend;
@@ -7,10 +9,10 @@ export function init(rend, sc, cam) {
   camera = cam;
 }
 
-export function setMode(mode) { params.mode = mode; }
-export function setGlow(intensity) { params.glow = Math.max(0, Math.min(2, intensity)); }
-export function setSharpen(intensity) { params.sharpen = Math.max(0, Math.min(1, intensity)); }
-export function setHue(degrees) { params.hue = Math.max(-180, Math.min(180, degrees)); }
+export function setMode(mode)     { setEarthMode(mode); }
+export function setGlow(v)        { setEarthGlow(v); }
+export function setSharpen(v)     { setEarthSharpen(v); }
+export function setHue(d)         { setEarthHue(d); }
 
 export function render() {
   if (!renderer || !scene || !camera) return;

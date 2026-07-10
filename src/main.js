@@ -1,5 +1,5 @@
 import { init as initScene, getScene, getCamera, getRenderer, animate } from './scene/SceneManager.js';
-import { create as createEarth, dispose as disposeEarth, updateIntroSpin, isIntroActive, finishIntro } from './scene/Earth.js';
+import { create as createEarth, dispose as disposeEarth, updateIntroSpin, isIntroActive, finishIntro, setMode as setEarthMode, updateTime as updateEarthTime } from './scene/Earth.js';
 import { create as createStars, dispose as disposeStars } from './scene/Starfield.js';
 import { init as initPP, setMode, setGlow, setSharpen, setHue, render as renderPP } from './scene/PostProcessing.js';
 import { init as initCamera, switchToLowOrbit, switchToSpaceArc, trackPoint, stopTracking, markIntroDone, update as updateCamera, getViewMode } from './controls/CameraController.js';
@@ -327,6 +327,9 @@ async function main() {
         layerModules[id].animate(dt);
       }
     });
+
+    // Earth shader time (scanlines etc.)
+    updateEarthTime(time);
 
     // Intro spin — runs each frame until complete, then stops.
     updateIntroSpin();
