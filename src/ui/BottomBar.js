@@ -194,7 +194,7 @@ export function setLayerStates(states) {
   const container = el?.querySelector('#layer-toggles');
   if (!container) return;
   container.innerHTML = '';
-  const colors = ['#FFFFFF','#FF9800','#00E676','#2196F3','#FF1744','#FF1744','#FFEB3B'];
+  const colors = ['#FFFFFF','#E53935','#00E676','#2196F3','#FF1744','#FF6D00','#FFEB3B'];
   states.forEach((s, i) => {
     const label = document.createElement('label');
     label.style.cssText = 'display:flex;align-items:center;gap:4px;cursor:pointer;';
