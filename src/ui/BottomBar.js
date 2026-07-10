@@ -30,7 +30,7 @@ function build() {
       <span id="time-label" data-i18n="label.now" style="font-size:10px;">${t('label.now')}</span>
     </div>
     <div id="layer-toggles" style="display:flex;gap:10px;flex-wrap:wrap;font-size:10px;"></div>
-    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+    <div id="additional-controls" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
       <button id="view-toggle-btn" data-i18n="btn.space-arc" style="border:1px solid ${COLORS.primaryText};background:${COLORS.panelBg};color:${COLORS.primaryText};padding:3px 10px;cursor:pointer;font-size:10px;">${t('btn.space-arc')}</button>
       <button id="night-vision-btn" data-i18n="btn.night-vision" style="border:1px solid ${COLORS.primaryText};background:${COLORS.panelBg};color:${COLORS.primaryText};padding:3px 10px;cursor:pointer;font-size:10px;">${_nightVision ? t('btn.normal-color') : t('btn.night-vision')}</button>
       <label style="font-size:10px;display:inline-flex;align-items:center;gap:3px;"><span data-i18n="label.glow">${t('label.glow')}</span> <input type="range" id="glow-slider" min="0" max="200" value="100" style="width:60px;accent-color:${COLORS.primaryText};"></label>
