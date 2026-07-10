@@ -2,7 +2,7 @@ import { init as initScene, getScene, getCamera, getRenderer, animate } from './
 import { create as createEarth, dispose as disposeEarth } from './scene/Earth.js';
 import { create as createStars, dispose as disposeStars } from './scene/Starfield.js';
 import { init as initPP, setMode, setGlow, setSharpen, setHue, render as renderPP } from './scene/PostProcessing.js';
-import { init as initCamera, switchToLowOrbit, switchToSpaceArc, flyTo, update as updateCamera, getViewMode } from './controls/CameraController.js';
+import { init as initCamera, switchToLowOrbit, switchToSpaceArc, trackPoint, stopTracking, update as updateCamera, getViewMode } from './controls/CameraController.js';
 import { init as initPicker, setClickableObjects, onPicked } from './controls/RaycasterPicker.js';
 import { init as initLayers, registerLayer, toggleLayer, updateTimeRange, getAllLayerStates } from './layers/LayerManager.js';
 import { init as initUI, getAllComponents } from './ui/UIManager.js';
@@ -98,6 +98,7 @@ async function main() {
   // Playback state
   let playbackPlaying = false;
   let activeEventIds = new Set();
+  let lastTrackedId = null; // avoid re-tracking the same event
 
   function syncVisibleEvents(start, end) {
     const visibleEvents = intelEventsData
@@ -111,7 +112,11 @@ async function main() {
     const newlyVisibleEvents = visibleEvents.filter(event => !activeEventIds.has(event.id));
     if (newlyVisibleEvents.length > 0) {
       const targetEvent = newlyVisibleEvents[0];
-      flyTo(earthGroup, targetEvent.lat, targetEvent.lon, 2.4);
+      // Only fly if it's a different event — avoid camera jitter
+      if (targetEvent.id !== lastTrackedId) {
+        lastTrackedId = targetEvent.id;
+        trackPoint(earthGroup, targetEvent.lat, targetEvent.lon, 2.4);
+      }
     }
     activeEventIds = nextVisibleIds;
   }
@@ -167,6 +172,8 @@ async function main() {
     updateTimeRange(now - TIME_WINDOW_HOURS * 3600000, now);
     intelMod?.setCurrentPlaybackTime?.({ start: now - TIME_WINDOW_HOURS * 3600000, end: now });
     activeEventIds = new Set();
+    lastTrackedId = null;
+    stopTracking();
     // Reset slider to NOW position
     bottomBar.setTimelinePosition(TIME_WINDOW_HOURS);
     console.log('Timeline stopped and reset to current time');

@@ -4,20 +4,33 @@ import { CAMERA_DEFAULTS, EARTH_RADIUS } from '../config.js';
 import { latLonToVec3 } from '../utils/math.js';
 import { lerp, easeInOutCubic } from '../utils/animation.js';
 
-let camera, renderer, controls, viewMode, cameraTarget, isFlying, flyAnimation;
+let camera, renderer, controls, viewMode;
+let fovAnimation = null;
+
+// ── tracking state ──
+// While non-null the camera continuously follows this geographic point,
+// re-projecting its world position every frame so it stays centred on
+// screen even when the earthGroup rotates.
+let tracking = null; // { group, lat, lon, dist }
+
 viewMode = 'low-orbit';
-cameraTarget = { lat: 25, lon: 55 };
-isFlying = false;
-flyAnimation = null;
 
 const UP = new THREE.Vector3(0, 1, 0);
-const WORLD_CENTER = new THREE.Vector3(0, 0, 0);
+
+/** Same formula as math.js::latLonToVec3 */
+function geoToLocal(lat, lon, radius) {
+  const raw = latLonToVec3(lat, lon, radius);
+  return new THREE.Vector3(raw.x, raw.y, raw.z);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  Public API
+// ═══════════════════════════════════════════════════════════════════
 
 export function init(cam, rend) {
   camera = cam;
   renderer = rend;
 
-  // OrbitControls: scroll zoom + drag rotate + right-click pan
   controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
   controls.dampingFactor = 0.08;
@@ -39,140 +52,125 @@ function applyViewMode(mode) {
   }
 }
 
-/**
- * Convert geographic coords → world point on Earth surface.
- * Uses the SAME formula as latLonToVec3 (and Earth.getSurfacePoint).
- *
- *   lon = 0  →  (+x, 0, 0)    Prime Meridian
- *   lon = -90 →  (0, 0, +z)   90° West
- *   lon = 90  →  (0, 0, -z)   90° East
- *   lat = 90  →  (0, +y, 0)   North Pole
- */
-function geoToWorld(lat, lon, radius) {
-  const raw = latLonToVec3(lat, lon, radius);
-  return new THREE.Vector3(raw.x, raw.y, raw.z);
-}
+// ── view-mode switches (FOV only, no position change) ──
 
 export function switchToLowOrbit() {
   viewMode = 'low-orbit';
-  isFlying = true;
-  flyAnimation = {
+  fovAnimation = {
     startFov: camera.fov,
-    endFov: CAMERA_DEFAULTS.lowOrbit.fov,
+    endFov:   CAMERA_DEFAULTS.lowOrbit.fov,
     startTime: performance.now(),
-    duration: 1500,
+    duration:  1200,
   };
 }
 
 export function switchToSpaceArc() {
   viewMode = 'space-arc';
-  isFlying = true;
-  flyAnimation = {
+  fovAnimation = {
     startFov: camera.fov,
-    endFov: CAMERA_DEFAULTS.spaceArc.fov,
+    endFov:   CAMERA_DEFAULTS.spaceArc.fov,
     startTime: performance.now(),
-    duration: 1500,
+    duration:  1200,
   };
 }
 
+// ── tracking (replaces one-shot flyTo) ──
+
 /**
- * Fly camera so the given (lat, lon) point on the Earth surface
- * appears in the centre of the screen.
+ * Start continuously tracking a geographic point — the camera will
+ * interpolate to it and then keep it centred every frame.  Cancel a
+ * previous track if one is in-flight.
  *
- * @param {THREE.Group} earthGroup — the earth group (may be rotating)
- * @param {number} lat  — geographic latitude
- * @param {number} lon  — geographic longitude
- * @param {number} distance — how far above the surface to place the camera
- * @param {Function} onComplete
+ * @param {THREE.Group} earthGroup
+ * @param {number} lat
+ * @param {number} lon
+ * @param {number} [dist=3.5]  camera altitude above surface
  */
-export function flyTo(earthGroup, lat, lon, distance, onComplete) {
-  // Cache the point in earthGroup-local space so we can re-project it
-  // every frame while the earth rotates.
-  const localPoint = geoToWorld(lat, lon, EARTH_RADIUS);
+export function trackPoint(earthGroup, lat, lon, dist = 3.5) {
+  const localPt = geoToLocal(lat, lon, EARTH_RADIUS);
 
-  // Compute the initial world-space surface point right now
-  const surfaceWorld = earthGroup.localToWorld(localPoint.clone());
-  const normal = surfaceWorld.clone().normalize();
-  const camEnd = surfaceWorld.clone().add(
-    normal.clone().multiplyScalar(distance || 3.5)
-  );
-  const lookMatrix = new THREE.Matrix4().lookAt(camEnd, surfaceWorld, UP);
-  const endQuat = new THREE.Quaternion().setFromRotationMatrix(lookMatrix);
-
-  isFlying = true;
-  flyAnimation = {
-    startPos:   camera.position.clone(),
-    startQuat:  camera.quaternion.clone(),
-    endPos:     camEnd,
-    endQuat,
-    endTarget:  surfaceWorld,
-    // Live target tracking — recompute world position each frame
-    groupRef:   earthGroup,
-    localTarget: localPoint,
-    distance:   distance || 3.5,
-    startTime:  performance.now(),
-    duration:   1000,
-    onComplete,
+  // snapshot current real camera state as start
+  tracking = {
+    group:       earthGroup,
+    localTarget: localPt,
+    lat,
+    lon,
+    dist,
+    // start state (frozen — used for smooth interpolation)
+    startPos:    camera.position.clone(),
+    startQuat:   camera.quaternion.clone(),
+    startTime:   performance.now(),
+    duration:    800,
   };
-  cameraTarget = { lat, lon };
+}
+
+/** Stop tracking — user can freely orbit again. */
+export function stopTracking() {
+  tracking = null;
 }
 
 export function getViewMode() { return viewMode; }
 
-export function getCurrentTarget() { return { ...cameraTarget }; }
+/** Returns the currently tracked {lat, lon} or null. */
+export function getCurrentTarget() {
+  return tracking ? { lat: tracking.lat, lon: tracking.lon } : null;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  Per-frame update
+// ═══════════════════════════════════════════════════════════════════
 
 export function update() {
+  // 1. FOV-only animation (view-mode toggle)
+  if (fovAnimation) {
+    const t = Math.min(
+      (performance.now() - fovAnimation.startTime) / fovAnimation.duration,
+      1,
+    );
+    camera.fov = lerp(fovAnimation.startFov, fovAnimation.endFov, easeInOutCubic(t));
+    camera.updateProjectionMatrix();
+    if (t >= 1) {
+      camera.fov = fovAnimation.endFov;
+      camera.updateProjectionMatrix();
+      fovAnimation = null;
+    }
+  }
+
+  // 2. OrbitControls idle damping (skip when we're driving the camera)
   if (controls) {
     controls.update();
   }
 
-  if (isFlying && flyAnimation) {
-    const elapsed = performance.now() - flyAnimation.startTime;
-    const t = Math.min(elapsed / flyAnimation.duration, 1);
+  // 3. Track a geographic point — override controls
+  if (tracking) {
+    const elapsed = performance.now() - tracking.startTime;
+    const t = Math.min(elapsed / tracking.duration, 1);
     const et = easeInOutCubic(t);
 
-    if (flyAnimation.endPos) {
-      camera.position.lerpVectors(flyAnimation.startPos, flyAnimation.endPos, et);
-      camera.quaternion.slerpQuaternions(flyAnimation.startQuat, flyAnimation.endQuat, et);
-    }
-    if (flyAnimation.endFov) {
-      camera.fov = lerp(flyAnimation.startFov, flyAnimation.endFov, et);
-      camera.updateProjectionMatrix();
+    // live world-space position of the tracked point
+    const worldTarget = tracking.group.localToWorld(
+      tracking.localTarget.clone(),
+    );
+    const normal = worldTarget.clone().normalize();
+    const worldCamPos = worldTarget.clone().add(
+      normal.multiplyScalar(tracking.dist),
+    );
+    const worldQuat = new THREE.Quaternion().setFromRotationMatrix(
+      new THREE.Matrix4().lookAt(worldCamPos, worldTarget, UP),
+    );
+
+    if (t < 1) {
+      // still in the transition — interpolate from frozen start
+      camera.position.lerpVectors(tracking.startPos, worldCamPos, et * 0.12 + 0.01);
+      camera.quaternion.slerpQuaternions(tracking.startQuat, worldQuat, et * 0.12 + 0.01);
+    } else {
+      // tracking "settled" — just keep it centred
+      camera.position.lerp(worldCamPos, 0.15);
+      camera.quaternion.slerp(worldQuat, 0.15);
     }
 
-    if (t >= 1) {
-      isFlying = false;
-
-      // Final precise snap: recompute target in current world-space
-      // in case the earth rotated during the flight.
-      if (flyAnimation.groupRef && flyAnimation.localTarget) {
-        const liveWorld = flyAnimation.groupRef.localToWorld(
-          flyAnimation.localTarget.clone()
-        );
-        const normal = liveWorld.clone().normalize();
-        const dist = flyAnimation.distance;
-        const finalPos = liveWorld.clone().add(normal.multiplyScalar(dist));
-        const finalQuat = new THREE.Quaternion().setFromRotationMatrix(
-          new THREE.Matrix4().lookAt(finalPos, liveWorld, UP)
-        );
-        camera.position.copy(finalPos);
-        camera.quaternion.copy(finalQuat);
-        if (controls) controls.target.copy(liveWorld);
-      } else {
-        camera.position.copy(flyAnimation.endPos);
-        camera.quaternion.copy(flyAnimation.endQuat);
-        if (flyAnimation.endTarget && controls) {
-          controls.target.copy(flyAnimation.endTarget);
-        }
-      }
-
-      if (flyAnimation.endFov) {
-        camera.fov = flyAnimation.endFov;
-        camera.updateProjectionMatrix();
-      }
-      if (flyAnimation.onComplete) flyAnimation.onComplete();
-      flyAnimation = null;
-    }
+    // always point OrbitControls target at the live world position
+    if (controls) controls.target.copy(worldTarget);
   }
 }
 
@@ -181,11 +179,9 @@ export function getControls() {
 }
 
 export function dispose() {
-  if (controls) {
-    controls.dispose();
-    controls = null;
-  }
+  if (controls) { controls.dispose(); controls = null; }
   camera = null;
   renderer = null;
-  flyAnimation = null;
+  tracking = null;
+  fovAnimation = null;
 }
