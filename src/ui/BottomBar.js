@@ -9,6 +9,7 @@ let _off = false;
 let _alertActive = false;
 let _spiralActive = false;
 let _activeSpeedBtn = null;
+let _lastLayerStates = null;
 
 function build() {
   if (!el) return;
@@ -35,14 +36,18 @@ function build() {
       <label style="font-size:10px;display:inline-flex;align-items:center;gap:3px;"><span data-i18n="label.glow">${t('label.glow')}</span> <input type="range" id="glow-slider" min="0" max="200" value="100" style="width:60px;accent-color:${COLORS.primaryText};"></label>
       <label style="font-size:10px;display:inline-flex;align-items:center;gap:3px;"><span data-i18n="label.sharp">${t('label.sharp')}</span> <input type="range" id="sharpen-slider" min="0" max="100" value="30" style="width:60px;accent-color:${COLORS.primaryText};"></label>
       <label style="font-size:10px;display:inline-flex;align-items:center;gap:3px;"><span data-i18n="label.hue">${t('label.hue')}</span> <input type="range" id="hue-slider" min="-180" max="180" value="0" style="width:60px;accent-color:${COLORS.primaryText};"></label>
-      <button id="alert-btn" data-i18n="btn.alert" style="border:1px solid ${COLORS.warning};background:${COLORS.panelBg};color:${COLORS.warning};padding:3px 8px;cursor:pointer;font-size:10px;">${t('btn.alert')}</button>
-      <button id="spiral-btn" data-i18n="btn.spiral" style="border:1px solid ${COLORS.primaryText};background:${COLORS.panelBg};color:${COLORS.primaryText};padding:3px 8px;cursor:pointer;font-size:10px;">${t('btn.spiral')}</button>
+      <button id="alert-btn" data-i18n="btn.alert" style="display:none;border:1px solid ${COLORS.warning};background:${COLORS.panelBg};color:${COLORS.warning};padding:3px 8px;cursor:pointer;font-size:10px;">${t('btn.alert')}</button>
+      <button id="spiral-btn" data-i18n="btn.spiral" style="display:none;border:1px solid ${COLORS.primaryText};background:${COLORS.panelBg};color:${COLORS.primaryText};padding:3px 8px;cursor:pointer;font-size:10px;">${t('btn.spiral')}</button>
     </div>
   `;
 
   bindEvents();
-  // Rebuild layer toggles immediately
-  window.dispatchEvent(new CustomEvent('bottombar-rebuilt'));
+  // Rebuild layer toggles from cache or fresh
+  if (_lastLayerStates) {
+    renderLayerToggles(_lastLayerStates);
+  } else {
+    window.dispatchEvent(new CustomEvent('bottombar-rebuilt'));
+  }
 }
 
 function bindEvents() {
@@ -196,6 +201,12 @@ export function showPlayIcon() {
 }
 
 export function setLayerStates(states) {
+  _lastLayerStates = states;
+  renderLayerToggles(states);
+}
+
+function renderLayerToggles(states) {
+  _lastLayerStates = states;
   const container = el?.querySelector('#layer-toggles');
   if (!container) return;
   container.innerHTML = '';
@@ -205,7 +216,6 @@ export function setLayerStates(states) {
     label.style.cssText = 'display:flex;align-items:center;gap:4px;cursor:pointer;';
     const nameSpan = document.createElement('span');
     nameSpan.style.color = colors[i] || '#00F0FF';
-    nameSpan.setAttribute('data-i18n', 'layer.' + s.id);
     nameSpan.textContent = layerName(s.id);
     label.innerHTML = '<input type="checkbox" ' + (s.visible ? 'checked' : '') + ' data-layer-id="' + s.id + '" style="accent-color:' + (colors[i]||'#00F0FF') + ';">';
     label.appendChild(nameSpan);
