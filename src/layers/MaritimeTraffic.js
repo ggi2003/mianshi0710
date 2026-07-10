@@ -7,7 +7,54 @@ let group, entities = [];
 const MARITIME_COLOR = 0x1565C0;
 const DASH_LENGTH = 0.1;
 const DASH_COUNT = 200;
-const SPEED = 0.0004; // very slow crawl
+const SPEED = 0.0004;
+
+/**
+ * Build a ship icon group — hull + superstructure + funnel + wake.
+ * The ship faces +Z (forward) with beam along X.
+ */
+function createShipIcon() {
+  const icon = new THREE.Group();
+
+  const hullMat = new THREE.MeshBasicMaterial({ color: 0x37474F });
+  const deckMat = new THREE.MeshBasicMaterial({ color: 0x546E7A });
+  const funnelMat = new THREE.MeshBasicMaterial({ color: 0x90A4AE });
+  const whiteMat = new THREE.MeshBasicMaterial({ color: 0xECEFF1 });
+
+  // Hull — tapered bottom, wider at deck
+  const hullGeo = new THREE.CylinderGeometry(0.04, 0.06, 0.30, 5);
+  hullGeo.rotateX(Math.PI / 2);   // align along Z
+  hullGeo.translate(0, -0.04, 0); // sit below deck line
+  const hull = new THREE.Mesh(hullGeo, hullMat);
+  icon.add(hull);
+
+  // Deck — flat box
+  const deckGeo = new THREE.BoxGeometry(0.10, 0.02, 0.28);
+  deckGeo.translate(0, 0.01, 0.02);
+  const deck = new THREE.Mesh(deckGeo, deckMat);
+  icon.add(deck);
+
+  // Superstructure / bridge
+  const bridgeGeo = new THREE.BoxGeometry(0.06, 0.08, 0.10);
+  bridgeGeo.translate(0, 0.06, 0.08);
+  const bridge = new THREE.Mesh(bridgeGeo, whiteMat);
+  icon.add(bridge);
+
+  // Funnel
+  const funnelGeo = new THREE.CylinderGeometry(0.025, 0.03, 0.10, 5);
+  funnelGeo.translate(0, 0.09, 0.00);
+  const funnel = new THREE.Mesh(funnelGeo, funnelMat);
+  icon.add(funnel);
+
+  // Bow — pointed front
+  const bowGeo = new THREE.ConeGeometry(0.04, 0.08, 4);
+  bowGeo.rotateX(-Math.PI / 2);
+  bowGeo.translate(0, -0.01, 0.19);
+  const bow = new THREE.Mesh(bowGeo, hullMat);
+  icon.add(bow);
+
+  return icon;
+}
 
 export function create(scene, earthGroup, data) {
   group = new THREE.Group();
@@ -18,7 +65,6 @@ export function create(scene, earthGroup, data) {
     const from = new THREE.Vector3(rawFrom.x, rawFrom.y, rawFrom.z);
     const to = new THREE.Vector3(rawTo.x, rawTo.y, rawTo.z);
 
-    // Build great-circle arc points
     const omega = Math.acos(Math.max(-1, Math.min(1,
       (from.x * to.x + from.y * to.y + from.z * to.z) / (EARTH_RADIUS * EARTH_RADIUS))));
     const so = Math.sin(omega);
@@ -37,7 +83,7 @@ export function create(scene, earthGroup, data) {
       allPoints.push(new THREE.Vector3(px / len * r, py / len * r, pz / len * r));
     }
 
-    // Build dashed line — many short dashes
+    // Dashed line
     const dashGeo = new THREE.BufferGeometry();
     const dashVertices = [];
     const pointsPerDash = 4;
@@ -62,12 +108,23 @@ export function create(scene, earthGroup, data) {
     dashLine.visible = true;
     group.add(dashLine);
 
-    // Vessel marker (cone) at midpoint
-    const markerGeo = new THREE.ConeGeometry(0.18, 0.45, 4);
-    const markerMat = new THREE.MeshBasicMaterial({ color: 0x90CAF9 });
-    const marker = new THREE.Mesh(markerGeo, markerMat);
+    // Ship icon at midpoint, oriented along path
     const mid = Math.floor(allPoints.length / 2);
+    const midPt = allPoints[mid].clone();
+    const nextPt = allPoints[Math.min(mid + 1, allPoints.length - 1)].clone();
+    const forward = nextPt.sub(midPt).normalize();
+
+    const marker = createShipIcon();
     marker.position.copy(allPoints[mid]);
+
+    // Orient: ship body (+Z) along forward, deck up radially
+    const up = allPoints[mid].clone().normalize();
+    const right = new THREE.Vector3().crossVectors(forward, up).normalize();
+    const correctedUp = new THREE.Vector3().crossVectors(right, forward).normalize();
+    const m4 = new THREE.Matrix4();
+    m4.makeBasis(right, correctedUp, forward);
+    marker.setRotationFromMatrix(m4);
+
     marker.visible = true;
     group.add(marker);
 
@@ -78,7 +135,7 @@ export function create(scene, earthGroup, data) {
       allPoints,
       totalSubPoints,
       marker,
-      markerOffset: 0, // flow offset: 0..1
+      markerOffset: 0,
       timestamp: Date.parse(vessel.timestamp),
     });
   });
@@ -86,10 +143,6 @@ export function create(scene, earthGroup, data) {
   return group;
 }
 
-/**
- * Advance dash flow animation.
- * @param {number} dt  Delta time in milliseconds.
- */
 export function animate(dt) {
   if (!group || !group.visible) return;
   const totalPoints = 256;
@@ -117,10 +170,7 @@ export function animate(dt) {
   });
 }
 
-export function update(timeRange) {
-  // Maritime traffic is always visible regardless of time window
-}
-
+export function update(timeRange) {}
 export function setVisible(visible) { if (group) group.visible = visible; }
 export function dispose() {
   if (group) {

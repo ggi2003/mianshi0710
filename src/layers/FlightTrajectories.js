@@ -7,7 +7,53 @@ let group, entities = [];
 const FLIGHT_COLOR = 0x4FC3F7;
 const DASH_LENGTH = 0.15;
 const DASH_COUNT = 160;
-const SPEED = 0.0008; // slow crawl
+const SPEED = 0.0008;
+
+/**
+ * Build an aircraft icon group — fuselage + wings + tail fin.
+ * The aircraft faces +Z (forward) with wings along X.
+ * Scale is tuned for markers ~0.5 units across.
+ */
+function createAircraftIcon() {
+  const icon = new THREE.Group();
+
+  const bodyMat = new THREE.MeshBasicMaterial({ color: 0xFFFFFF });
+  const wingMat = new THREE.MeshBasicMaterial({ color: 0xB0BEC5 });
+  const tailMat = new THREE.MeshBasicMaterial({ color: 0x90A4AE });
+
+  // Fuselage — elongated capsule (cylinder) along Z
+  const fuseGeo = new THREE.CylinderGeometry(0.04, 0.04, 0.40, 6);
+  fuseGeo.rotateX(Math.PI / 2); // align to Z
+  const fuselage = new THREE.Mesh(fuseGeo, bodyMat);
+  icon.add(fuselage);
+
+  // Nose cone
+  const noseGeo = new THREE.ConeGeometry(0.04, 0.08, 6);
+  noseGeo.rotateX(-Math.PI / 2);
+  noseGeo.translate(0, 0, 0.22);
+  const nose = new THREE.Mesh(noseGeo, bodyMat);
+  icon.add(nose);
+
+  // Wings — flat box across X
+  const wingGeo = new THREE.BoxGeometry(0.30, 0.015, 0.12);
+  wingGeo.translate(0, -0.03, -0.02);
+  const wings = new THREE.Mesh(wingGeo, wingMat);
+  icon.add(wings);
+
+  // Tail fin — vertical slab at rear
+  const tailGeo = new THREE.BoxGeometry(0.02, 0.10, 0.06);
+  tailGeo.translate(0, 0.07, -0.15);
+  const tailFin = new THREE.Mesh(tailGeo, tailMat);
+  icon.add(tailFin);
+
+  // Tail horizontal stabilizer
+  const stabGeo = new THREE.BoxGeometry(0.14, 0.01, 0.06);
+  stabGeo.translate(0, 0.03, -0.16);
+  const stabilizer = new THREE.Mesh(stabGeo, wingMat);
+  icon.add(stabilizer);
+
+  return icon;
+}
 
 export function create(scene, earthGroup, data) {
   group = new THREE.Group();
@@ -18,7 +64,6 @@ export function create(scene, earthGroup, data) {
     const from = new THREE.Vector3(rawFrom.x, rawFrom.y, rawFrom.z);
     const to = new THREE.Vector3(rawTo.x, rawTo.y, rawTo.z);
 
-    // Build great-circle arc points
     const omega = Math.acos(Math.max(-1, Math.min(1,
       (from.x * to.x + from.y * to.y + from.z * to.z) / (EARTH_RADIUS * EARTH_RADIUS))));
     const so = Math.sin(omega);
@@ -37,7 +82,7 @@ export function create(scene, earthGroup, data) {
       allPoints.push(new THREE.Vector3(px / len * r, py / len * r, pz / len * r));
     }
 
-    // Build dashed line — many short dashes
+    // Dashed line
     const dashGeo = new THREE.BufferGeometry();
     const dashVertices = [];
     const pointsPerDash = 4;
@@ -62,12 +107,23 @@ export function create(scene, earthGroup, data) {
     dashLine.visible = true;
     group.add(dashLine);
 
-    // Aircraft marker (small cone along path midpoint)
-    const markerGeo = new THREE.ConeGeometry(0.15, 0.4, 4);
-    const markerMat = new THREE.MeshBasicMaterial({ color: 0xFFFFFF });
-    const marker = new THREE.Mesh(markerGeo, markerMat);
+    // Aircraft icon at midpoint, oriented along path
     const mid = Math.floor(allPoints.length / 2);
+    const midPt = allPoints[mid].clone();
+    const nextPt = allPoints[Math.min(mid + 1, allPoints.length - 1)].clone();
+    const forward = nextPt.sub(midPt).normalize(); // tangent direction
+
+    const marker = createAircraftIcon();
     marker.position.copy(allPoints[mid]);
+
+    // Orient: aircraft body (+Z) along forward, wings out radially
+    const up = allPoints[mid].clone().normalize(); // radial from Earth center
+    const right = new THREE.Vector3().crossVectors(forward, up).normalize();
+    const correctedUp = new THREE.Vector3().crossVectors(right, forward).normalize();
+    const m4 = new THREE.Matrix4();
+    m4.makeBasis(right, correctedUp, forward);
+    marker.setRotationFromMatrix(m4);
+
     marker.visible = true;
     group.add(marker);
 
@@ -78,7 +134,7 @@ export function create(scene, earthGroup, data) {
       allPoints,
       totalSubPoints,
       marker,
-      markerOffset: 0,         // flow offset: 0..1
+      markerOffset: 0,
       timestamp: Date.parse(flight.timestamp),
     });
   });
@@ -86,10 +142,6 @@ export function create(scene, earthGroup, data) {
   return group;
 }
 
-/**
- * Advance dash flow animation.
- * @param {number} dt  Delta time in milliseconds.
- */
 export function animate(dt) {
   if (!group || !group.visible) return;
   const totalPoints = 256;
@@ -117,10 +169,7 @@ export function animate(dt) {
   });
 }
 
-export function update(timeRange) {
-  // Flights are always visible regardless of time window
-}
-
+export function update(timeRange) {}
 export function setVisible(visible) { if (group) group.visible = visible; }
 export function dispose() {
   if (group) {
