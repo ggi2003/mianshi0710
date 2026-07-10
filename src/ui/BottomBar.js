@@ -1,5 +1,5 @@
 import { COLORS } from '../config.js';
-import { t, layerName } from '../i18n.js';
+import { t, layerName, getLang } from '../i18n.js';
 
 let el, listeners = {};
 let _viewMode = 'low-orbit';
@@ -29,15 +29,17 @@ function build() {
       <input type="range" id="timeline-slider" min="0" max="168" value="168" style="flex:1;min-width:100px;accent-color:${COLORS.primaryText};">
       <span id="time-label" data-i18n="label.now" style="font-size:10px;">${t('label.now')}</span>
     </div>
-    <div id="layer-toggles" style="display:flex;gap:10px;flex-wrap:wrap;font-size:10px;"></div>
-    <div id="additional-controls" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-      <button id="view-toggle-btn" data-i18n="btn.space-arc" style="border:1px solid ${COLORS.primaryText};background:${COLORS.panelBg};color:${COLORS.primaryText};padding:3px 10px;cursor:pointer;font-size:10px;">${t('btn.space-arc')}</button>
+    <div id="bottom-row" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <div id="layer-toggles" style="display:flex;gap:10px;flex-wrap:wrap;font-size:10px;flex-shrink:0;"></div>
+      <div id="additional-controls" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;${getLang() === 'zh' ? 'margin-left:auto;' : ''}">
+        <button id="view-toggle-btn" data-i18n="btn.space-arc" style="border:1px solid ${COLORS.primaryText};background:${COLORS.panelBg};color:${COLORS.primaryText};padding:3px 10px;cursor:pointer;font-size:10px;">${t('btn.space-arc')}</button>
       <button id="night-vision-btn" data-i18n="btn.night-vision" style="border:1px solid ${COLORS.primaryText};background:${COLORS.panelBg};color:${COLORS.primaryText};padding:3px 10px;cursor:pointer;font-size:10px;">${_nightVision ? t('btn.normal-color') : t('btn.night-vision')}</button>
       <label style="font-size:10px;display:inline-flex;align-items:center;gap:3px;"><span data-i18n="label.glow">${t('label.glow')}</span> <input type="range" id="glow-slider" min="0" max="200" value="100" style="width:60px;accent-color:${COLORS.primaryText};"></label>
       <label style="font-size:10px;display:inline-flex;align-items:center;gap:3px;"><span data-i18n="label.sharp">${t('label.sharp')}</span> <input type="range" id="sharpen-slider" min="0" max="100" value="30" style="width:60px;accent-color:${COLORS.primaryText};"></label>
       <label style="font-size:10px;display:inline-flex;align-items:center;gap:3px;"><span data-i18n="label.hue">${t('label.hue')}</span> <input type="range" id="hue-slider" min="-180" max="180" value="0" style="width:60px;accent-color:${COLORS.primaryText};"></label>
       <button id="alert-btn" data-i18n="btn.alert" style="display:none;border:1px solid ${COLORS.warning};background:${COLORS.panelBg};color:${COLORS.warning};padding:3px 8px;cursor:pointer;font-size:10px;">${t('btn.alert')}</button>
       <button id="spiral-btn" data-i18n="btn.spiral" style="display:none;border:1px solid ${COLORS.primaryText};background:${COLORS.panelBg};color:${COLORS.primaryText};padding:3px 8px;cursor:pointer;font-size:10px;">${t('btn.spiral')}</button>
+      </div>
     </div>
   `;
 
