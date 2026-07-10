@@ -320,6 +320,14 @@ async function main() {
     updateCamera();
     renderPP();
 
+    // ── Per-frame layer animations (satellite orbit + dash flow) ──
+    const dt = lastFrameTime ? time - lastFrameTime : 16;
+    ['satellites', 'flights', 'maritime'].forEach(id => {
+      if (layerModules[id]?.animate) {
+        layerModules[id].animate(dt);
+      }
+    });
+
     // Intro spin — runs each frame until complete, then stops.
     updateIntroSpin();
 
