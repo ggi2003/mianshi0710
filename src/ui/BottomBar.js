@@ -193,6 +193,17 @@ export function setActiveSpeed(speed) {
 }
 
 export function showPlayIcon() {
+  _paused = false;
+  const btn = el?.querySelector('#pause-btn');
+  if (btn) {
+    btn.textContent = t('btn.pause');
+    btn.style.borderColor = COLORS.warning;
+    btn.style.color = COLORS.warning;
+  }
+}
+
+/** Set pause button to ▶ play icon (for when playback toggles off or reaches "now") */
+export function showPauseIcon() {
   _paused = true;
   const btn = el?.querySelector('#pause-btn');
   if (btn) {

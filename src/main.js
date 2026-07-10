@@ -197,9 +197,11 @@ async function main() {
       if (playbackPosition >= TIME_WINDOW_HOURS) {
         playbackPosition = 0;
       }
+      bottomBar.showPlayIcon();
       console.log('Playback started from position:', playbackPosition, 'with speed 200h/x');
     } else {
       isPaused = true;
+      bottomBar.showPauseIcon();
       console.log('Playback paused');
     }
   });
@@ -366,7 +368,7 @@ async function main() {
           isPaused = false;
           topBar.setPlaybackState(false);
           bottomBar.setActiveSpeed(null);
-          bottomBar.showPlayIcon();
+          bottomBar.showPauseIcon();
           console.log('Timeline reached current time');
         }
 
