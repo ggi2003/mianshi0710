@@ -1,5 +1,5 @@
 import { init as initScene, getScene, getCamera, getRenderer, animate } from './scene/SceneManager.js';
-import { create as createEarth, dispose as disposeEarth, updateIntroSpin } from './scene/Earth.js';
+import { create as createEarth, dispose as disposeEarth, updateIntroSpin, isIntroActive, finishIntro } from './scene/Earth.js';
 import { create as createStars, dispose as disposeStars } from './scene/Starfield.js';
 import { init as initPP, setMode, setGlow, setSharpen, setHue, render as renderPP } from './scene/PostProcessing.js';
 import { init as initCamera, switchToLowOrbit, switchToSpaceArc, trackPoint, stopTracking, markIntroDone, update as updateCamera, getViewMode } from './controls/CameraController.js';
@@ -93,7 +93,14 @@ async function main() {
   let playbackSpeed = 1;
   let isPaused = false;
   let isStopped = true;
-  let playbackPosition = TIME_WINDOW_HOURS; // Position in hours from start (0 = 7 days ago, 168 = now)
+  let playbackPosition = 0; // start from beginning of time window
+
+  // ── Intro gate ──
+  // Suppress playback (and therefore event tracking) while the intro
+  // spin is playing so the two animations don't fight.
+  function isIntroBlocking() {
+    return isIntroActive();
+  }
 
   // Playback state
   let playbackPlaying = false;
@@ -160,21 +167,33 @@ async function main() {
   }
 
   topBar.on('playback-click', () => {
+    // If intro hasn't finished yet, skip it and jump to event state.
+    if (isIntroActive()) {
+      finishIntro();
+      autoStarted = true;
+      isStopped = false;
+      playbackPlaying = true;
+      markIntroDone();
+      topBar.setPlaybackState(true);
+      bottomBar.setTimelinePosition(0);
+      bottomBar.setActiveSpeed(12000);
+      tickPlaybackState(0);
+      console.log('User clicked playback during intro — skipping to event view');
+      return;
+    }
+
     playbackPlaying = !playbackPlaying;
     topBar.setPlaybackState(playbackPlaying);
 
     if (playbackPlaying) {
-      // Start playback
       isStopped = false;
       isPaused = false;
-      playbackSpeed = 12000; // Default speed: 200h/x
-      // If at NOW position, reset to beginning for playback
+      playbackSpeed = 12000;
       if (playbackPosition >= TIME_WINDOW_HOURS) {
         playbackPosition = 0;
       }
       console.log('Playback started from position:', playbackPosition, 'with speed 200h/x');
     } else {
-      // Pause playback
       isPaused = true;
       console.log('Playback paused');
     }
@@ -286,6 +305,8 @@ async function main() {
   // AI panel close
   aiPanel.on('close', () => {});
 
+  let autoStarted = false;
+
   // 10. Start render loop
   let fpsFrames = 0, fpsTime = performance.now(), currentFps = 0;
   let lastFrameTime = performance.now();
@@ -294,27 +315,42 @@ async function main() {
     renderPP();
 
     // Intro spin — runs each frame until complete, then stops.
-    // Once it finishes, tell CameraController it can start tracking events.
-    const introActive = updateIntroSpin();
-    if (!introActive) {
-      markIntroDone();
-    }
+    updateIntroSpin();
 
     const isPlaybackActive = !isStopped && !isPaused;
 
+    // ── Intro-completion handoff ──
+    // Once the intro spin finishes, start playback automatically.
+    if (!autoStarted && !isIntroActive()) {
+      autoStarted = true;
+      isStopped = false;
+      playbackPlaying = true;
+      markIntroDone();
+      topBar.setPlaybackState(true);
+      bottomBar.setTimelinePosition(0);
+      bottomBar.setActiveSpeed(12000);
+      tickPlaybackState(0);
+      console.log('Intro complete — auto-starting playback');
+    }
+
     // Time playback logic
     if (!isStopped && !isPaused) {
-      // Advance playback time based on speed
-      const deltaTime = time - lastFrameTime;
-      playbackPosition += deltaTime * playbackSpeed / 3600000;
+      if (isIntroBlocking()) {
+        // Intro spin still running — skip the auto-advance, but still
+        // keep the render loop alive.
+      } else {
+        // Advance playback time based on speed
+        const deltaTime = time - lastFrameTime;
+        playbackPosition += deltaTime * playbackSpeed / 3600000;
 
-      if (playbackPosition >= TIME_WINDOW_HOURS) {
-        playbackPosition = TIME_WINDOW_HOURS;
-        isStopped = true;
-        console.log('Timeline reached current time');
+        if (playbackPosition >= TIME_WINDOW_HOURS) {
+          playbackPosition = TIME_WINDOW_HOURS;
+          isStopped = true;
+          console.log('Timeline reached current time');
+        }
+
+        tickPlaybackState(playbackPosition);
       }
-
-      tickPlaybackState(playbackPosition);
     }
 
     lastFrameTime = time;
@@ -333,16 +369,9 @@ async function main() {
     0, 0, 0
   );
 
-  // 11. Auto-start playback on page load
+  // 11. State after intro finishes — auto-start playback
   playbackPosition = 0;
   playbackSpeed = 12000;
-  isStopped = false;
-  playbackPlaying = true;
-  topBar.setPlaybackState(true);
-  bottomBar.setTimelinePosition(0);
-  bottomBar.setActiveSpeed(12000);
-  tickPlaybackState(0);
-  console.log('Auto-start playback from position 0 with speed 200h/x');
 }
 
 // Start when DOM is ready

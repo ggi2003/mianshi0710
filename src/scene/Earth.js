@@ -97,11 +97,21 @@ export function updateIntroSpin() {
   const t = Math.min(elapsed / introSpin.duration, 1);
   earthGroup.rotation.y = introSpin.startY + (introSpin.endY - introSpin.startY) * easeOutCubic(t);
   if (t >= 1) {
+    introSpin = null;
+  }
+  return t < 1;
+}
+
+/** Returns true while the intro spin is still in progress. */
+export function isIntroActive() {
+  return introSpin !== null;
+}
+
+export function finishIntro() {
+  if (introSpin) {
     earthGroup.rotation.y = introSpin.endY;
     introSpin = null;
-    return false;
   }
-  return true;
 }
 
 /**
