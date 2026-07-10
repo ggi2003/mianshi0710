@@ -6,18 +6,20 @@ import { lerp, easeInOutCubic } from '../utils/animation.js';
 
 let camera, renderer, controls, viewMode;
 let fovAnimation = null;
-let tracking = null;
+let tracking = null; // null | { group, startQuat, targetQuat, startCamPos, targetCamPos: {camPos, quat}, startTime, duration }
+let introDone = false;
 
 viewMode = 'low-orbit';
 
 const WORLD_UP = new THREE.Vector3(0, 1, 0);
+const FORWARD = new THREE.Vector3(0, 0, 1);  // +Z = screen front
 
 function geoToLocal(lat, lon, radius) {
   const raw = latLonToVec3(lat, lon, radius);
   return new THREE.Vector3(raw.x, raw.y, raw.z);
 }
 
-/** Build camera-look frame for a world-space surface point */
+/** Build camera position + orientation looking at a world-space surface point */
 function lookFrame(worldTarget, dist) {
   const n = worldTarget.clone().normalize();
   const cp = worldTarget.clone().add(n.clone().multiplyScalar(dist));
@@ -29,28 +31,6 @@ function lookFrame(worldTarget, dist) {
     new THREE.Matrix4().lookAt(cp, worldTarget, up),
   );
   return { camPos: cp, quat };
-}
-
-/**
- * Rotate the earth group so the local point faces +Z (the camera's
- * default forward direction).  Then place camera on +Z looking at
- * origin and the event is dead-centre.
- */
-function spinEarthToFace(earthGroup, localTarget, dist) {
-  // The target point in local space must end up at (+Z * R) in world
-  // space (i.e.  facing the default camera position along +Z).
-  const localNorm = localTarget.clone().normalize();
-  const desiredWorldNorm = new THREE.Vector3(0, 0, 1);
-
-  // Quaternion that rotates localNorm → desiredWorldNorm
-  const q = new THREE.Quaternion().setFromUnitVectors(localNorm, desiredWorldNorm);
-
-  // Apply to earthGroup
-  earthGroup.quaternion.copy(q);
-
-  // Now the surface point is at (0, 0, R) in world space
-  const worldTarget = new THREE.Vector3(0, 0, EARTH_RADIUS);
-  return worldTarget;
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -89,29 +69,43 @@ export function switchToSpaceArc() {
   fovAnimation = { startFov: camera.fov, endFov: CAMERA_DEFAULTS.spaceArc.fov, startTime: performance.now(), duration: 1200 };
 }
 
-export function trackPoint(earthGroup, lat, lon, dist = 2.8) {
-  const localPt = geoToLocal(lat, lon, EARTH_RADIUS);
+/**
+ * Called once from main.js once the intro spin has finished.
+ * Unlocks the camera to actually track events (rotation is forbidden
+ * during the intro so the two animations don't fight).
+ */
+export function markIntroDone() { introDone = true; }
 
-  // Snapshot current earth quaternion for interpolation
+/** Rotate earth AND camera so the event at (lat, lon) faces the screen. */
+export function trackPoint(earthGroup, lat, lon, dist = 2.8) {
+  if (!introDone) return; // don't hijack the intro spin
+
+  const localPt = geoToLocal(lat, lon, EARTH_RADIUS);
+  const localNorm = localPt.clone().normalize();
+
+  // Earth quaternion that puts the event at +Z (forward)
+  const targetEarthQuat = new THREE.Quaternion().setFromUnitVectors(localNorm, FORWARD);
+
+  // Camera target: (0, 0, R) + outward by `dist`
+  const worldTarget = new THREE.Vector3(0, 0, EARTH_RADIUS);
+  const { camPos: targetCamPos, quat: targetCamQuat } = lookFrame(worldTarget, dist);
+
   tracking = {
-    group:       earthGroup,
-    localTarget: localPt,
-    lat,
-    lon,
-    dist,
-    startQuat:   earthGroup.quaternion.clone(),
-    startCamPos: camera.position.clone(),
-    startCamQuat: camera.quaternion.clone(),
-    startTime:   performance.now(),
-    duration:    1200,
+    group:         earthGroup,
+    startQuat:     earthGroup.quaternion.clone(),
+    targetQuat:    targetEarthQuat,
+    startCamPos:   camera.position.clone(),
+    startCamQuat:  camera.quaternion.clone(),
+    targetCamPos,
+    targetCamQuat,
+    startTime:     performance.now(),
+    duration:      900,
   };
 }
 
 export function stopTracking() { tracking = null; }
 export function getViewMode() { return viewMode; }
-export function getCurrentTarget() {
-  return tracking ? { lat: tracking.lat, lon: tracking.lon } : null;
-}
+export function getCurrentTarget() { return null; }
 
 // ═══════════════════════════════════════════════════════════════════
 //  Per-frame update
@@ -129,34 +123,30 @@ export function update() {
   // 2. OrbitControls
   if (controls) controls.update();
 
-  // 3. Tracking — rotate earth so event faces camera
-  if (tracking) {
+  // 3. Tracking — rotate earth + camera so event faces screen
+  if (tracking && introDone) {
     const elapsed = performance.now() - tracking.startTime;
     const t = Math.min(elapsed / tracking.duration, 1);
     const et = easeInOutCubic(t);
 
-    // Compute the target earth quaternion that puts the event at +Z
-    const localNorm = tracking.localTarget.clone().normalize();
-    const targetQuat = new THREE.Quaternion().setFromUnitVectors(localNorm, new THREE.Vector3(0, 0, 1));
-
     // Interpolate earth rotation
     tracking.group.quaternion.copy(
-      tracking.startQuat.clone().slerp(targetQuat, et)
+      tracking.startQuat.clone().slerp(tracking.targetQuat, et)
     );
 
-    // The event is now at (0, 0, R) in world space — camera sits on +Z
-    const worldTarget = new THREE.Vector3(0, 0, EARTH_RADIUS);
-    const { camPos: endCamPos, quat: endCamQuat } = lookFrame(worldTarget, tracking.dist);
+    // Interpolate camera
+    camera.position.lerpVectors(tracking.startCamPos, tracking.targetCamPos, et);
+    camera.quaternion.slerpQuaternions(tracking.startCamQuat, tracking.targetCamQuat, et);
 
-    if (t < 1) {
-      camera.position.lerpVectors(tracking.startCamPos, endCamPos, et);
-      camera.quaternion.slerpQuaternions(tracking.startCamQuat, endCamQuat, et);
-    } else {
-      camera.position.lerp(endCamPos, 0.15);
-      camera.quaternion.slerp(endCamQuat, 0.15);
+    // OrbitControls target on the surface point at (0,0,R)
+    if (controls) {
+      const worldTarget = new THREE.Vector3(0, 0, EARTH_RADIUS);
+      controls.target.copy(worldTarget);
     }
 
-    if (controls) controls.target.copy(worldTarget);
+    if (t >= 1) {
+      tracking = null;
+    }
   }
 }
 

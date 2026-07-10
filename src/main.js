@@ -2,7 +2,7 @@ import { init as initScene, getScene, getCamera, getRenderer, animate } from './
 import { create as createEarth, dispose as disposeEarth, updateIntroSpin } from './scene/Earth.js';
 import { create as createStars, dispose as disposeStars } from './scene/Starfield.js';
 import { init as initPP, setMode, setGlow, setSharpen, setHue, render as renderPP } from './scene/PostProcessing.js';
-import { init as initCamera, switchToLowOrbit, switchToSpaceArc, trackPoint, stopTracking, update as updateCamera, getViewMode } from './controls/CameraController.js';
+import { init as initCamera, switchToLowOrbit, switchToSpaceArc, trackPoint, stopTracking, markIntroDone, update as updateCamera, getViewMode } from './controls/CameraController.js';
 import { init as initPicker, setClickableObjects, onPicked } from './controls/RaycasterPicker.js';
 import { init as initLayers, registerLayer, toggleLayer, updateTimeRange, getAllLayerStates } from './layers/LayerManager.js';
 import { init as initUI, getAllComponents } from './ui/UIManager.js';
@@ -293,8 +293,12 @@ async function main() {
     updateCamera();
     renderPP();
 
-    // Intro spin — runs each frame until complete, then stops
-    updateIntroSpin();
+    // Intro spin — runs each frame until complete, then stops.
+    // Once it finishes, tell CameraController it can start tracking events.
+    const introActive = updateIntroSpin();
+    if (!introActive) {
+      markIntroDone();
+    }
 
     const isPlaybackActive = !isStopped && !isPaused;
 
