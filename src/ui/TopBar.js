@@ -66,10 +66,11 @@ export function updateForPlaybackTime(cursorMs, events) {
   const badge = el.querySelector('#tb-threat-badge');
   if (badge) {
     const has = (s) => events && events.some(e => e.severity === s);
-    let text = 'NORMAL', color = '#00E676';
-    if (has('CRITICAL')) { text = 'CRITICAL'; color = '#FF1744'; }
-    else if (has('HIGH')) { text = 'ELEVATED'; color = '#FF9800'; }
-    else if (has('MEDIUM')) { text = 'GUARDED'; color = '#FFEB3B'; }
+    const isZh = getLang() === 'zh';
+    let text = isZh ? '正常' : 'NORMAL', color = '#00E676';
+    if (has('CRITICAL')) { text = isZh ? '危急' : 'CRITICAL'; color = '#FF1744'; }
+    else if (has('HIGH')) { text = isZh ? '升高' : 'ELEVATED'; color = '#FF9800'; }
+    else if (has('MEDIUM')) { text = isZh ? '警戒' : 'GUARDED'; color = '#FFEB3B'; }
     badge.textContent = text;
     badge.style.color = color;
     badge.style.borderColor = color;

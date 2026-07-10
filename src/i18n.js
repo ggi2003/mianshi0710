@@ -51,9 +51,17 @@ const translations = {
     'label.threat': '威胁',
     'label.gso': 'GSO:',
     'label.ntirs': 'NTIRS:',
-    'label.alt': 'ALT:',
+    'label.alt': ' ALT:',
     'label.sun': 'SUN:',
     'btn.ai-analysis': 'AI 分析',
+
+    // RightPanel severity counts & events header (hardcoded text)
+    'rp.active-events': '活跃事件',
+    'rp.crit': '危急',
+    'rp.high': '高危',
+    'rp.med': '中警',
+    'rp.no-events': '— 当前窗口无事件 —',
+    'rp.rec': '记录',
 
     // EventCard
     'card.title': '情报事件',
@@ -140,6 +148,14 @@ const translations = {
     'label.sun': 'SUN:',
     'btn.ai-analysis': 'AI ANALYSIS',
 
+    // RightPanel severity counts & events header
+    'rp.active-events': 'ACTIVE EVENTS',
+    'rp.crit': 'CRIT',
+    'rp.high': 'HIGH',
+    'rp.med': 'MED',
+    'rp.no-events': '— NO EVENTS IN WINDOW —',
+    'rp.rec': 'REC',
+
     // EventCard
     'card.title': 'INTEL EVENT',
     'field.type': 'TYPE:',
@@ -187,21 +203,6 @@ export function setLang(lang) {
   if (lang === currentLang || !translations[lang]) return;
   currentLang = lang;
   localStorage.setItem(STORAGE_KEY, lang);
-  // Update all data-i18n elements — only their first text node, not nested children
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.getAttribute('data-i18n');
-    if (key) {
-      // Only update the text content of this node, preserving child elements
-      for (const node of el.childNodes) {
-        if (node.nodeType === Node.TEXT_NODE) {
-          node.textContent = t(key);
-          return; // Only replace the first text node
-        }
-      }
-      // Fallback: no text child found, just set textContent
-      el.textContent = t(key);
-    }
-  });
   window.dispatchEvent(new CustomEvent('langchange', { detail: { lang } }));
 }
 
