@@ -1,39 +1,35 @@
 import * as THREE from 'three';
 import { EARTH_RADIUS } from '../config.js';
+import { easeOutCubic } from '../utils/animation.js';
 
 let earthGroup;
-let textureSphere; // the textured sphere mesh, exposed for alignment
+let textureSphere;
+let introSpin = null; // { startTime, duration, startY, endY }
 
 const textureLoader = new THREE.TextureLoader();
 
 export function create(scene) {
   earthGroup = new THREE.Group();
 
-  // ── Textured sphere with real world map ──
   const geometry = new THREE.SphereGeometry(EARTH_RADIUS, 128, 64);
 
-  // Load equirectangular world map texture (4096×2048, 2:1 ratio)
   const dayTexture = textureLoader.load('/textures/earth-blue-marble.jpg');
   dayTexture.colorSpace = THREE.SRGBColorSpace;
-  dayTexture.anisotropy = 16; // sharpen texture at grazing angles
+  dayTexture.anisotropy = 16;
 
   const material = new THREE.MeshPhongMaterial({
     map: dayTexture,
-    color: 0xffffff,       // white = no tint, show true map colours
+    color: 0xffffff,
     specular: 0x111111,
     shininess: 5,
   });
 
   textureSphere = new THREE.Mesh(geometry, material);
 
-  // ── Alignment ──
-  // Three.js SphereGeometry default UV: U=0→lon=-180°(-X), U=0.5→lon=0°(+X).
-  // latLonToVec3: lon=0→+X, lon=-180°→-X.  They match natively — no rotation.
-  // Verified: every 90° of longitude aligns correctly at the equator.
-
+  // Three.js SphereGeometry UV → latLonToVec3 alignment is natively correct.
   earthGroup.add(textureSphere);
 
-  // Atmosphere glow (unchanged)
+  // Atmosphere glow
   const atmosGeo = new THREE.SphereGeometry(EARTH_RADIUS * 1.02, 64, 32);
   const atmosMat = new THREE.ShaderMaterial({
     uniforms: {
@@ -70,6 +66,16 @@ export function create(scene) {
   earthGroup.add(atmosphere);
 
   scene.add(earthGroup);
+
+  // ── Intro spin animation ──
+  // Rapid horizontal rotation 225° (1.25π) around Y, ease-out deceleration.
+  introSpin = {
+    startTime: performance.now(),
+    duration: 1800,  // ms
+    startY: 0,
+    endY: 1.25 * Math.PI,  // 225°
+  };
+
   return earthGroup;
 }
 
@@ -79,6 +85,23 @@ export function getGroup() {
 
 export function getTextureSphere() {
   return textureSphere;
+}
+
+/**
+ * Update the intro spin animation.  Call once per frame.
+ * Returns true while the animation is still running.
+ */
+export function updateIntroSpin() {
+  if (!introSpin) return false;
+  const elapsed = performance.now() - introSpin.startTime;
+  const t = Math.min(elapsed / introSpin.duration, 1);
+  earthGroup.rotation.y = introSpin.startY + (introSpin.endY - introSpin.startY) * easeOutCubic(t);
+  if (t >= 1) {
+    earthGroup.rotation.y = introSpin.endY;
+    introSpin = null;
+    return false;
+  }
+  return true;
 }
 
 /**

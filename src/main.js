@@ -1,5 +1,5 @@
 import { init as initScene, getScene, getCamera, getRenderer, animate } from './scene/SceneManager.js';
-import { create as createEarth, dispose as disposeEarth } from './scene/Earth.js';
+import { create as createEarth, dispose as disposeEarth, updateIntroSpin } from './scene/Earth.js';
 import { create as createStars, dispose as disposeStars } from './scene/Starfield.js';
 import { init as initPP, setMode, setGlow, setSharpen, setHue, render as renderPP } from './scene/PostProcessing.js';
 import { init as initCamera, switchToLowOrbit, switchToSpaceArc, trackPoint, stopTracking, update as updateCamera, getViewMode } from './controls/CameraController.js';
@@ -98,27 +98,65 @@ async function main() {
   // Playback state
   let playbackPlaying = false;
   let activeEventIds = new Set();
-  let lastTrackedId = null; // avoid re-tracking the same event
+  let lastTrackedId = null;
 
-  function syncVisibleEvents(start, end) {
+  /** Derive full state from playbackPosition and push to all subsystems */
+  function tickPlaybackState(position) {
+    const now = Date.now();
+    const cursorTime = getPlaybackCursorTime(position, now);
+    const start = playbackWindowStart + position * 3600000;
+    const range = { start, end: cursorTime };
+
+    updateTimeRange(start, cursorTime);
+    intelMod?.setCurrentPlaybackTime?.(range);
+
+    // ── visible intel events for this window ──
     const visibleEvents = intelEventsData
-      .filter(event => {
-        const timestamp = Date.parse(event.timestamp);
-        return !Number.isNaN(timestamp) && timestamp >= start && timestamp <= end;
-      })
+      .filter(e => { const ts = Date.parse(e.timestamp); return !Number.isNaN(ts) && ts >= start && ts <= cursorTime; })
       .sort((a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp));
 
-    const nextVisibleIds = new Set(visibleEvents.map(event => event.id));
-    const newlyVisibleEvents = visibleEvents.filter(event => !activeEventIds.has(event.id));
-    if (newlyVisibleEvents.length > 0) {
-      const targetEvent = newlyVisibleEvents[0];
-      // Only fly if it's a different event — avoid camera jitter
-      if (targetEvent.id !== lastTrackedId) {
-        lastTrackedId = targetEvent.id;
-        trackPoint(earthGroup, targetEvent.lat, targetEvent.lon, 2.4);
+    const nextVisibleIds = new Set(visibleEvents.map(e => e.id));
+    const newlyVisible = visibleEvents.filter(e => !activeEventIds.has(e.id));
+    if (newlyVisible.length > 0) {
+      const target = newlyVisible[0];
+      if (target.id !== lastTrackedId) {
+        lastTrackedId = target.id;
+        trackPoint(earthGroup, target.lat, target.lon, 2.4);
       }
     }
+    for (const oldId of activeEventIds) {
+      if (!nextVisibleIds.has(oldId)) intelMod?.hideEvent?.(oldId);
+    }
     activeEventIds = nextVisibleIds;
+    if (visibleEvents.length === 0) { stopTracking(); lastTrackedId = null; }
+
+    // ── UI updates ──
+    bottomBar.setTimelinePosition(position);
+
+    const critCount = visibleEvents.filter(e => e.severity === 'CRITICAL').length;
+    const highCount = visibleEvents.filter(e => e.severity === 'HIGH').length;
+    const medCount  = visibleEvents.filter(e => e.severity === 'MEDIUM').length;
+    rightPanel.updateForPlaybackTime(cursorTime, visibleEvents, { critical: critCount, high: highCount, medium: medCount });
+
+    // Corner overlays — show the tracked event's coords or the latest visible event
+    const trackedOrLatest = (lastTrackedId && visibleEvents.find(e => e.id === lastTrackedId)) || visibleEvents[0];
+    if (trackedOrLatest) {
+      cornerOverlays.updateCoordinates(trackedOrLatest.lat, trackedOrLatest.lon);
+    }
+    cornerOverlays.updateStats(
+      Object.values(getAllLayerStates()).filter(s => s.visible).length,
+      visibleEvents.length,
+      0, 0
+    );
+  }
+
+  function deprecate_old_syncVisibleEvents(start, end) {
+    // kept for compatibility — all logic merged into tickPlaybackState
+    tickPlaybackState(playbackPosition);
+  }
+
+  function syncVisibleEvents(start, end) {
+    tickPlaybackState(playbackPosition);
   }
 
   topBar.on('playback-click', () => {
@@ -174,9 +212,8 @@ async function main() {
     activeEventIds = new Set();
     lastTrackedId = null;
     stopTracking();
-    // Reset slider to NOW position
-    bottomBar.setTimelinePosition(TIME_WINDOW_HOURS);
-    console.log('Timeline stopped and reset to current time');
+    // Trigger re-evaluation for the now-position
+    tickPlaybackState(TIME_WINDOW_HOURS);
   });
 
   // Alert / Spiral
@@ -224,17 +261,8 @@ async function main() {
 
   // Timeline
   bottomBar.on('time-change', ({ hour }) => {
-    const now = Date.now();
-    const cursorTime = getPlaybackCursorTime(hour, now);
-    const start = playbackWindowStart + hour * 3600000;
-    updateTimeRange(start, cursorTime);
-    intelMod?.setCurrentPlaybackTime?.({ start, end: cursorTime });
-    syncVisibleEvents(start, cursorTime);
-    // Update playback position
     playbackPosition = hour;
-    currentPlaybackTime = cursorTime;
-    // Update slider visual position
-    bottomBar.setTimelinePosition(hour);
+    tickPlaybackState(hour);
   });
 
   // Pick events → EventCard
@@ -265,79 +293,51 @@ async function main() {
     updateCamera();
     renderPP();
 
+    // Intro spin — runs each frame until complete, then stops
+    updateIntroSpin();
+
     const isPlaybackActive = !isStopped && !isPaused;
-    if (earthGroup) {
-      earthGroup.rotation.y += isPlaybackActive ? 0.0012 : 0.0003;
-    }
 
     // Time playback logic
     if (!isStopped && !isPaused) {
       // Advance playback time based on speed
-      // playbackSpeed: 1/6x (0.166), 1/3x (0.33), 1x (1), 5x, 15x, 60x (1h)
-      // Playback moves from past (position=0) toward now (position=168)
-      const deltaTime = time - lastFrameTime; // milliseconds since last frame
-      const playbackAdvance = deltaTime * playbackSpeed / 3600000; // Convert to hours
+      const deltaTime = time - lastFrameTime;
+      playbackPosition += deltaTime * playbackSpeed / 3600000;
 
-      // Move playback position forward in time
-      playbackPosition += playbackAdvance;
-
-      // Clamp to valid range [0, TIME_WINDOW_HOURS]
       if (playbackPosition >= TIME_WINDOW_HOURS) {
         playbackPosition = TIME_WINDOW_HOURS;
-        isStopped = true; // Reached current time
+        isStopped = true;
         console.log('Timeline reached current time');
       }
 
-      // Update time range
-      const now = Date.now();
-      const cursorTime = getPlaybackCursorTime(playbackPosition, now);
-      const start = playbackWindowStart + playbackPosition * 3600000;
-      updateTimeRange(start, cursorTime);
-      intelMod?.setCurrentPlaybackTime?.({ start, end: cursorTime });
-      syncVisibleEvents(start, cursorTime);
-
-      // Update slider visual position
-      bottomBar.setTimelinePosition(playbackPosition);
+      tickPlaybackState(playbackPosition);
     }
 
-    // Update last frame time
     lastFrameTime = time;
 
-    // FPS
     fpsFrames++;
     if (time - fpsTime >= 1000) {
       currentFps = Math.round(fpsFrames / ((time - fpsTime) / 1000));
       fpsFrames = 0;
       fpsTime = time;
     }
-
-    // Update corner overlays
-    cornerOverlays.updateStats(
-      Object.values(getAllLayerStates()).filter(s => s.visible).length,
-      3,
-      currentFps,
-      Math.round(performance.now() - time)
-    );
-    cornerOverlays.updateCoordinates(26.2, 50.5);
   });
 
   // Initial layer state display
   cornerOverlays.updateStats(
     LAYERS.filter(l => l.enabled).length,
-    3, 0, 0
+    0, 0, 0
   );
 
   // 11. Auto-start playback on page load
-  playbackPosition = 0; // Start from the beginning
-  playbackSpeed = 12000; // 200h/x speed
-  isStopped = false; // Enable playback
+  playbackPosition = 0;
+  playbackSpeed = 12000;
+  isStopped = false;
   playbackPlaying = true;
-  topBar.setPlaybackState(true); // Update UI button text to "播放中"
-  bottomBar.setTimelinePosition(0); // Update slider to beginning
-  bottomBar.setActiveSpeed(12000); // Highlight 200h/x button
-  const initialCursorTime = getPlaybackCursorTime(0, Date.now());
-  intelMod?.setCurrentPlaybackTime?.({ start: playbackWindowStart, end: initialCursorTime });
-  syncVisibleEvents(playbackWindowStart, initialCursorTime);
+  topBar.setPlaybackState(true);
+  bottomBar.setTimelinePosition(0);
+  bottomBar.setActiveSpeed(12000);
+  tickPlaybackState(0);
   console.log('Auto-start playback from position 0 with speed 200h/x');
 }
 

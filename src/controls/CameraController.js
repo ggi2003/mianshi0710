@@ -6,21 +6,51 @@ import { lerp, easeInOutCubic } from '../utils/animation.js';
 
 let camera, renderer, controls, viewMode;
 let fovAnimation = null;
-
-// ── tracking state ──
-// While non-null the camera continuously follows this geographic point,
-// re-projecting its world position every frame so it stays centred on
-// screen even when the earthGroup rotates.
-let tracking = null; // { group, lat, lon, dist }
+let tracking = null;
 
 viewMode = 'low-orbit';
 
-const UP = new THREE.Vector3(0, 1, 0);
+const WORLD_UP = new THREE.Vector3(0, 1, 0);
 
-/** Same formula as math.js::latLonToVec3 */
 function geoToLocal(lat, lon, radius) {
   const raw = latLonToVec3(lat, lon, radius);
   return new THREE.Vector3(raw.x, raw.y, raw.z);
+}
+
+/** Build camera-look frame for a world-space surface point */
+function lookFrame(worldTarget, dist) {
+  const n = worldTarget.clone().normalize();
+  const cp = worldTarget.clone().add(n.clone().multiplyScalar(dist));
+  const right = new THREE.Vector3().crossVectors(n, WORLD_UP).normalize();
+  const up = right.length() < 0.001
+    ? new THREE.Vector3(1, 0, 0)
+    : new THREE.Vector3().crossVectors(right, n).normalize();
+  const quat = new THREE.Quaternion().setFromRotationMatrix(
+    new THREE.Matrix4().lookAt(cp, worldTarget, up),
+  );
+  return { camPos: cp, quat };
+}
+
+/**
+ * Rotate the earth group so the local point faces +Z (the camera's
+ * default forward direction).  Then place camera on +Z looking at
+ * origin and the event is dead-centre.
+ */
+function spinEarthToFace(earthGroup, localTarget, dist) {
+  // The target point in local space must end up at (+Z * R) in world
+  // space (i.e.  facing the default camera position along +Z).
+  const localNorm = localTarget.clone().normalize();
+  const desiredWorldNorm = new THREE.Vector3(0, 0, 1);
+
+  // Quaternion that rotates localNorm → desiredWorldNorm
+  const q = new THREE.Quaternion().setFromUnitVectors(localNorm, desiredWorldNorm);
+
+  // Apply to earthGroup
+  earthGroup.quaternion.copy(q);
+
+  // Now the surface point is at (0, 0, R) in world space
+  const worldTarget = new THREE.Vector3(0, 0, EARTH_RADIUS);
+  return worldTarget;
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -46,72 +76,39 @@ export function init(cam, rend) {
 
 function applyViewMode(mode) {
   const defaults = mode === 'low-orbit' ? CAMERA_DEFAULTS.lowOrbit : CAMERA_DEFAULTS.spaceArc;
-  if (camera) {
-    camera.fov = defaults.fov;
-    camera.updateProjectionMatrix();
-  }
+  if (camera) { camera.fov = defaults.fov; camera.updateProjectionMatrix(); }
 }
-
-// ── view-mode switches (FOV only, no position change) ──
 
 export function switchToLowOrbit() {
   viewMode = 'low-orbit';
-  fovAnimation = {
-    startFov: camera.fov,
-    endFov:   CAMERA_DEFAULTS.lowOrbit.fov,
-    startTime: performance.now(),
-    duration:  1200,
-  };
+  fovAnimation = { startFov: camera.fov, endFov: CAMERA_DEFAULTS.lowOrbit.fov, startTime: performance.now(), duration: 1200 };
 }
 
 export function switchToSpaceArc() {
   viewMode = 'space-arc';
-  fovAnimation = {
-    startFov: camera.fov,
-    endFov:   CAMERA_DEFAULTS.spaceArc.fov,
-    startTime: performance.now(),
-    duration:  1200,
-  };
+  fovAnimation = { startFov: camera.fov, endFov: CAMERA_DEFAULTS.spaceArc.fov, startTime: performance.now(), duration: 1200 };
 }
 
-// ── tracking (replaces one-shot flyTo) ──
-
-/**
- * Start continuously tracking a geographic point — the camera will
- * interpolate to it and then keep it centred every frame.  Cancel a
- * previous track if one is in-flight.
- *
- * @param {THREE.Group} earthGroup
- * @param {number} lat
- * @param {number} lon
- * @param {number} [dist=3.5]  camera altitude above surface
- */
-export function trackPoint(earthGroup, lat, lon, dist = 3.5) {
+export function trackPoint(earthGroup, lat, lon, dist = 2.8) {
   const localPt = geoToLocal(lat, lon, EARTH_RADIUS);
 
-  // snapshot current real camera state as start
+  // Snapshot current earth quaternion for interpolation
   tracking = {
     group:       earthGroup,
     localTarget: localPt,
     lat,
     lon,
     dist,
-    // start state (frozen — used for smooth interpolation)
-    startPos:    camera.position.clone(),
-    startQuat:   camera.quaternion.clone(),
+    startQuat:   earthGroup.quaternion.clone(),
+    startCamPos: camera.position.clone(),
+    startCamQuat: camera.quaternion.clone(),
     startTime:   performance.now(),
-    duration:    800,
+    duration:    1200,
   };
 }
 
-/** Stop tracking — user can freely orbit again. */
-export function stopTracking() {
-  tracking = null;
-}
-
+export function stopTracking() { tracking = null; }
 export function getViewMode() { return viewMode; }
-
-/** Returns the currently tracked {lat, lon} or null. */
 export function getCurrentTarget() {
   return tracking ? { lat: tracking.lat, lon: tracking.lon } : null;
 }
@@ -121,67 +118,51 @@ export function getCurrentTarget() {
 // ═══════════════════════════════════════════════════════════════════
 
 export function update() {
-  // 1. FOV-only animation (view-mode toggle)
+  // 1. FOV
   if (fovAnimation) {
-    const t = Math.min(
-      (performance.now() - fovAnimation.startTime) / fovAnimation.duration,
-      1,
-    );
+    const t = Math.min((performance.now() - fovAnimation.startTime) / fovAnimation.duration, 1);
     camera.fov = lerp(fovAnimation.startFov, fovAnimation.endFov, easeInOutCubic(t));
     camera.updateProjectionMatrix();
-    if (t >= 1) {
-      camera.fov = fovAnimation.endFov;
-      camera.updateProjectionMatrix();
-      fovAnimation = null;
-    }
+    if (t >= 1) { camera.fov = fovAnimation.endFov; camera.updateProjectionMatrix(); fovAnimation = null; }
   }
 
-  // 2. OrbitControls idle damping (skip when we're driving the camera)
-  if (controls) {
-    controls.update();
-  }
+  // 2. OrbitControls
+  if (controls) controls.update();
 
-  // 3. Track a geographic point — override controls
+  // 3. Tracking — rotate earth so event faces camera
   if (tracking) {
     const elapsed = performance.now() - tracking.startTime;
     const t = Math.min(elapsed / tracking.duration, 1);
     const et = easeInOutCubic(t);
 
-    // live world-space position of the tracked point
-    const worldTarget = tracking.group.localToWorld(
-      tracking.localTarget.clone(),
+    // Compute the target earth quaternion that puts the event at +Z
+    const localNorm = tracking.localTarget.clone().normalize();
+    const targetQuat = new THREE.Quaternion().setFromUnitVectors(localNorm, new THREE.Vector3(0, 0, 1));
+
+    // Interpolate earth rotation
+    tracking.group.quaternion.copy(
+      tracking.startQuat.clone().slerp(targetQuat, et)
     );
-    const normal = worldTarget.clone().normalize();
-    const worldCamPos = worldTarget.clone().add(
-      normal.multiplyScalar(tracking.dist),
-    );
-    const worldQuat = new THREE.Quaternion().setFromRotationMatrix(
-      new THREE.Matrix4().lookAt(worldCamPos, worldTarget, UP),
-    );
+
+    // The event is now at (0, 0, R) in world space — camera sits on +Z
+    const worldTarget = new THREE.Vector3(0, 0, EARTH_RADIUS);
+    const { camPos: endCamPos, quat: endCamQuat } = lookFrame(worldTarget, tracking.dist);
 
     if (t < 1) {
-      // still in the transition — interpolate from frozen start
-      camera.position.lerpVectors(tracking.startPos, worldCamPos, et * 0.12 + 0.01);
-      camera.quaternion.slerpQuaternions(tracking.startQuat, worldQuat, et * 0.12 + 0.01);
+      camera.position.lerpVectors(tracking.startCamPos, endCamPos, et);
+      camera.quaternion.slerpQuaternions(tracking.startCamQuat, endCamQuat, et);
     } else {
-      // tracking "settled" — just keep it centred
-      camera.position.lerp(worldCamPos, 0.15);
-      camera.quaternion.slerp(worldQuat, 0.15);
+      camera.position.lerp(endCamPos, 0.15);
+      camera.quaternion.slerp(endCamQuat, 0.15);
     }
 
-    // always point OrbitControls target at the live world position
     if (controls) controls.target.copy(worldTarget);
   }
 }
 
-export function getControls() {
-  return controls;
-}
+export function getControls() { return controls; }
 
 export function dispose() {
   if (controls) { controls.dispose(); controls = null; }
-  camera = null;
-  renderer = null;
-  tracking = null;
-  fovAnimation = null;
+  camera = null; renderer = null; tracking = null; fovAnimation = null;
 }

@@ -25,10 +25,10 @@ export function toggleLayer(id, visible) {
 }
 
 export function updateTimeRange(start, end) {
-  currentTimeRange = { start, end };
+  const range = { start, end };
   Object.values(layers).forEach(layer => {
     if (layer.module.update && layer.visible) {
-      layer.module.update(currentTimeRange);
+      layer.module.update(range);
     }
   });
 }

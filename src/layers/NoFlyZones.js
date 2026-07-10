@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { latLonToVec3 } from '../utils/math.js';
 import { EARTH_RADIUS } from '../config.js';
 
-let group;
+let group, entities = [];
 
 function toVec3(raw) {
   return new THREE.Vector3(raw.x, raw.y, raw.z);
@@ -10,6 +10,7 @@ function toVec3(raw) {
 
 export function create(scene, earthGroup, data) {
   group = new THREE.Group();
+  entities = [];
   data.forEach(zone => {
     const centerLat = zone.vertices.reduce((s, v) => s + v.lat, 0) / zone.vertices.length;
     const centerLon = zone.vertices.reduce((s, v) => s + v.lon, 0) / zone.vertices.length;
@@ -30,6 +31,7 @@ export function create(scene, earthGroup, data) {
     const rawCp2 = latLonToVec3(centerLat, centerLon, EARTH_RADIUS * 1.015);
     mesh.position.copy(toVec3(rawCp2));
     mesh.lookAt(new THREE.Vector3(0, 0, 0));
+    mesh.visible = false;
     group.add(mesh);
 
     const borderPoints = zone.vertices.map(v => toVec3(latLonToVec3(v.lat, v.lon, EARTH_RADIUS * 1.015)));
@@ -37,18 +39,36 @@ export function create(scene, earthGroup, data) {
     const borderGeo = new THREE.BufferGeometry().setFromPoints(borderPoints);
     const borderMat = new THREE.LineBasicMaterial({ color: 0xFF1744, transparent: true, opacity: 0.8 });
     const border = new THREE.Line(borderGeo, borderMat);
+    border.visible = false;
     group.add(border);
+
+    entities.push({
+      mesh,
+      border,
+      startTime: Date.parse(zone.startTime),
+      endTime: Date.parse(zone.endTime),
+    });
   });
   earthGroup.add(group);
   return group;
 }
 
-export function update(timeRange) {}
+export function update(timeRange) {
+  const cursor = timeRange?.end ?? Date.now();
+  entities.forEach(e => {
+    const visible = (Number.isNaN(e.startTime) || cursor >= e.startTime) &&
+                    (Number.isNaN(e.endTime) || cursor <= e.endTime);
+    e.mesh.visible = visible;
+    e.border.visible = visible;
+  });
+}
+
 export function setVisible(visible) { if (group) group.visible = visible; }
 export function dispose() {
   if (group) {
     group.traverse(c => { if (c.geometry) c.geometry.dispose(); if (c.material) c.material.dispose(); });
     group.parent?.remove(group);
     group = null;
+    entities = [];
   }
 }

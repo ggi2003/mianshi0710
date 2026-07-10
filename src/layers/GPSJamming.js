@@ -2,10 +2,11 @@ import * as THREE from 'three';
 import { latLonToVec3 } from '../utils/math.js';
 import { EARTH_RADIUS } from '../config.js';
 
-let group;
+let group, entities = [];
 
 export function create(scene, earthGroup, data) {
   group = new THREE.Group();
+  entities = [];
   data.forEach(point => {
     const raw = latLonToVec3(point.lat, point.lon, EARTH_RADIUS * 1.01);
     const pos = new THREE.Vector3(raw.x, raw.y, raw.z);
@@ -16,18 +17,31 @@ export function create(scene, earthGroup, data) {
     const circle = new THREE.Mesh(geo, mat);
     circle.position.copy(pos);
     circle.lookAt(new THREE.Vector3(0, 0, 0));
+    circle.visible = false;
     group.add(circle);
+    entities.push({
+      circle,
+      timestamp: Date.parse(point.timestamp),
+    });
   });
   earthGroup.add(group);
   return group;
 }
 
-export function update(timeRange) {}
+export function update(timeRange) {
+  const start = timeRange?.start ?? -Infinity;
+  const end = timeRange?.end ?? Infinity;
+  entities.forEach(e => {
+    e.circle.visible = !Number.isNaN(e.timestamp) && e.timestamp >= start && e.timestamp <= end;
+  });
+}
+
 export function setVisible(visible) { if (group) group.visible = visible; }
 export function dispose() {
   if (group) {
     group.traverse(c => { if (c.geometry) c.geometry.dispose(); if (c.material) c.material.dispose(); });
     group.parent?.remove(group);
     group = null;
+    entities = [];
   }
 }

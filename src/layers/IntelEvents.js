@@ -3,6 +3,7 @@ import { latLonToVec3 } from '../utils/math.js';
 import { EARTH_RADIUS } from '../config.js';
 
 let group, markers, currentPlaybackTime, currentTimeRange, eventData;
+const markerLookup = new Map(); // id → marker for fast show/hide
 
 function updateMarkerVisibility() {
   const start = currentTimeRange?.start ?? -Infinity;
@@ -21,6 +22,7 @@ function updateMarkerVisibility() {
 export function create(scene, earthGroup, data) {
   group = new THREE.Group();
   markers = [];
+  markerLookup.clear();
   eventData = data || [];
   eventData.forEach(event => {
     const raw = latLonToVec3(event.lat, event.lon, EARTH_RADIUS * 1.04);
@@ -48,6 +50,7 @@ export function create(scene, earthGroup, data) {
     group.add(cone);
     group.add(sprite);
     markers.push(cone);
+    markerLookup.set(event.id, cone);
   });
   earthGroup.add(group);
   return group;
@@ -56,6 +59,17 @@ export function create(scene, earthGroup, data) {
 export function getClickableObjects() { return markers || []; }
 export function getEventById(id) {
   return markers ? markers.find(m => m.userData?.eventId === id)?.userData?.event || null : null;
+}
+
+/** Hide a single event by ID (called when it exits the time window) */
+export function hideEvent(id) {
+  const marker = markerLookup.get(id);
+  if (marker) {
+    marker.visible = false;
+    if (marker.userData?.sprite) {
+      marker.userData.sprite.visible = false;
+    }
+  }
 }
 
 export function update(timeRange) {
@@ -82,6 +96,7 @@ export function dispose() {
     group.parent?.remove(group);
     group = null;
     markers = null;
+    markerLookup.clear();
     currentPlaybackTime = null;
     currentTimeRange = null;
     eventData = null;

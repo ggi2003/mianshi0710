@@ -1,54 +1,37 @@
 import { t } from '../i18n.js';
 
-function formatBeijingTime() {
-  const now = new Date();
-  const bj = new Date(now.getTime() + now.getTimezoneOffset() * 60000 + 8 * 3600000);
-  const y = bj.getFullYear();
-  const m = String(bj.getMonth() + 1).padStart(2, '0');
-  const d = String(bj.getDate()).padStart(2, '0');
-  const h = String(bj.getHours()).padStart(2, '0');
-  const min = String(bj.getMinutes()).padStart(2, '0');
-  const s = String(bj.getSeconds()).padStart(2, '0');
-  return `${y}-${m}-${d} ${h}:${min}:${s} BJT`;
-}
-
 let el, aiBtn, threatSelect;
 let listeners = {};
+
+/** Format a Date (or timestamp ms) as "YYYY-MM-DD HH:MM:SS BJT" */
+function formatBeijingTime(dateOrMs) {
+  const d = dateOrMs instanceof Date ? dateOrMs : new Date(dateOrMs);
+  const bj = new Date(d.getTime() + 8 * 3600000);
+  const y = bj.getUTCFullYear();
+  const m = String(bj.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(bj.getUTCDate()).padStart(2, '0');
+  const h = String(bj.getUTCHours()).padStart(2, '0');
+  const min = String(bj.getUTCMinutes()).padStart(2, '0');
+  const s = String(bj.getUTCSeconds()).padStart(2, '0');
+  return `${y}-${m}-${day} ${h}:${min}:${s} BJT`;
+}
 
 export function init(container) {
   el = document.createElement('div');
   el.style.cssText = 'font-size:11px;';
   el.innerHTML = `
     <div style="margin-bottom:6px;">
-      <div style="color:#00F0FF;">REC ${formatBeijingTime()}</div>
+      <div id="rp-rec-line" style="color:#00F0FF;">REC ${formatBeijingTime(Date.now())}</div>
       <div style="font-size:9px;opacity:0.5;">LOG #0451 DESC OK</div>
     </div>
-    <div style="margin-top:12px;padding:6px 0;border-top:1px solid rgba(0,240,255,0.2);">
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
-        <span style="display:inline-block;width:6px;height:6px;background:#2196F3;box-shadow:0 0 4px #2196F3;"></span>
-        <span data-i18n="label.force">${t('label.force')}</span>
-        <span style="color:#2196F3;">2.4k</span>
-      </div>
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
-        <span style="display:inline-block;width:6px;height:6px;background:#2196F3;box-shadow:0 0 4px #2196F3;"></span>
-        <span data-i18n="label.surveillance">${t('label.surveillance')}</span>
-        <span style="color:#2196F3;">89%</span>
-      </div>
-      <div style="display:flex;align-items:center;gap:6px;">
-        <span style="display:inline-block;width:6px;height:6px;background:#FF9800;box-shadow:0 0 4px #FF9800;"></span>
-        <span data-i18n="label.threat">${t('label.threat')}</span>
-        <select id="threat-select" style="background:#000;color:#FF9800;border:1px solid rgba(255,152,0,0.5);font-size:10px;font-family:inherit;">
-          <option>Tactical</option>
-          <option>Strategic</option>
-          <option>Operational</option>
-        </select>
-      </div>
+    <div id="rp-events-section" style="margin-top:12px;padding:6px 0;border-top:1px solid rgba(0,240,255,0.2);max-height:240px;overflow-y:auto;">
+      <div id="rp-events-title" style="font-size:10px;opacity:0.6;margin-bottom:4px;">ACTIVE EVENTS</div>
+      <div id="rp-events-list" style="font-size:10px;"></div>
     </div>
     <div style="margin-top:12px;padding-top:6px;border-top:1px solid rgba(0,240,255,0.2);font-size:9px;">
-      <div><span data-i18n="label.gso">${t('label.gso')}</span> <span>575.68M</span> <span data-i18n="label.ntirs">${t('label.ntirs')}</span> <span>0.0</span></div>
-      <div><span data-i18n="label.alt">${t('label.alt')}</span> <span>1935159N</span> <span data-i18n="label.sun">${t('label.sun')}</span> <span>-24.3° EL</span></div>
+      <div><span>CRIT</span> <span id="rp-crit-count">0</span> &nbsp; <span>HIGH</span> <span id="rp-high-count">0</span> &nbsp; <span>MED</span> <span id="rp-med-count">0</span></div>
     </div>
-    <div style="margin-top:16px;">
+    <div style="margin-top:12px;">
       <button id="ai-analysis-btn" data-i18n="btn.ai-analysis" style="width:100%;padding:8px;background:rgba(0,240,255,0.1);border:1px solid #00F0FF;color:#00F0FF;font-family:inherit;font-size:12px;cursor:pointer;text-shadow:0 0 4px #00F0FF;">${t('btn.ai-analysis')}</button>
     </div>
   `;
@@ -57,20 +40,62 @@ export function init(container) {
   aiBtn = el.querySelector('#ai-analysis-btn');
   threatSelect = el.querySelector('#threat-select');
   aiBtn.addEventListener('click', () => listeners['ai-analysis-click']?.forEach(cb => cb()));
-  threatSelect.addEventListener('change', (e) => listeners['threat-change']?.forEach(cb => cb(e.target.value)));
+  if (threatSelect) {
+    threatSelect.addEventListener('change', (e) => listeners['threat-change']?.forEach(cb => cb(e.target.value)));
+  }
 
   return el;
 }
 
-export function updateTimestamp(ts) {
-  const d = el?.querySelector('div:first-child div:first-child');
-  if (d) d.textContent = 'REC ' + ts;
+/**
+ * Update the right panel for a specific playback time.
+ * @param {number} cursorMs  — current playback cursor (ms since epoch)
+ * @param {Array} [events]   — visible intel events at this time
+ * @param {Object} [counts]  — { critical, high, medium, low }
+ */
+export function updateForPlaybackTime(cursorMs, events, counts) {
+  if (!el) return;
+
+  // 1. REC line
+  const recLine = el.querySelector('#rp-rec-line');
+  if (recLine) recLine.textContent = 'REC ' + formatBeijingTime(cursorMs);
+
+  // 2. Event list
+  const list = el.querySelector('#rp-events-list');
+  if (list) {
+    if (!events || events.length === 0) {
+      list.innerHTML = '<div style="opacity:0.3;">— NO EVENTS IN WINDOW —</div>';
+    } else {
+      list.innerHTML = events.slice(0, 12).map(e => {
+        const color = e.severity === 'CRITICAL' ? '#FF1744'
+          : e.severity === 'HIGH' ? '#FF9800'
+          : e.severity === 'MEDIUM' ? '#FFEB3B'
+          : '#00E676';
+        return `<div style="margin-bottom:3px;border-left:2px solid ${color};padding-left:4px;">
+          <span style="color:${color};">${e.severity?.slice(0, 4) || '??'}</span>
+          ${e.name?.slice(0, 28) || '—'}
+        </div>`;
+      }).join('');
+      if (events.length > 12) {
+        list.innerHTML += `<div style="opacity:0.4;">… +${events.length - 12} more</div>`;
+      }
+    }
+  }
+
+  // 3. Counts
+  if (counts) {
+    const crit = el.querySelector('#rp-crit-count');
+    const high = el.querySelector('#rp-high-count');
+    const med  = el.querySelector('#rp-med-count');
+    if (crit) crit.textContent = counts.critical ?? 0;
+    if (high) high.textContent = counts.high ?? 0;
+    if (med)  med.textContent  = counts.medium ?? 0;
+  }
 }
 
-export function updateTelemetry(gso, ntirs, alt, sun) {}
-
-export function setThreatLevel(level) {
-  if (threatSelect) threatSelect.value = level;
+export function updateTimestamp(ts) {
+  const d = el?.querySelector('#rp-rec-line');
+  if (d) d.textContent = 'REC ' + ts;
 }
 
 export function on(event, callback) {

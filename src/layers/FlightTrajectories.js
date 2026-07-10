@@ -1,12 +1,14 @@
 import * as THREE from 'three';
-import { latLonToVec3, greatCircleInterpolation } from '../utils/math.js';
+import { latLonToVec3 } from '../utils/math.js';
 import { EARTH_RADIUS } from '../config.js';
 
-let group;
+let group, entities = [];
+
 const FLIGHT_COLOR = 0x4FC3F7;
 
 export function create(scene, earthGroup, data) {
   group = new THREE.Group();
+  entities = [];
   data.forEach(flight => {
     const rawFrom = latLonToVec3(flight.from.lat, flight.from.lon, EARTH_RADIUS * 1.005);
     const rawTo = latLonToVec3(flight.to.lat, flight.to.lon, EARTH_RADIUS * 1.005);
@@ -14,7 +16,6 @@ export function create(scene, earthGroup, data) {
     const to = new THREE.Vector3(rawTo.x, rawTo.y, rawTo.z);
     const segments = 32;
     const points = [];
-    // Slerp interpolation on sphere surface
     for (let i = 0; i <= segments; i++) {
       const t = i / segments;
       const omega = Math.acos(Math.max(-1, Math.min(1,
@@ -33,6 +34,7 @@ export function create(scene, earthGroup, data) {
     const lineGeo = new THREE.BufferGeometry().setFromPoints(curvePoints);
     const lineMat = new THREE.LineBasicMaterial({ color: FLIGHT_COLOR, transparent: true, opacity: 0.6 });
     const line = new THREE.Line(lineGeo, lineMat);
+    line.visible = false;
     group.add(line);
 
     // Aircraft marker
@@ -40,18 +42,36 @@ export function create(scene, earthGroup, data) {
     const markerMat = new THREE.MeshBasicMaterial({ color: 0xFFFFFF });
     const marker = new THREE.Mesh(markerGeo, markerMat);
     marker.position.copy(points[Math.floor(points.length / 2)]);
+    marker.visible = false;
     group.add(marker);
+
+    entities.push({
+      flight,
+      timestamp: Date.parse(flight.timestamp),
+      line,
+      marker,
+    });
   });
   earthGroup.add(group);
   return group;
 }
 
-export function update(timeRange) { /* static data, no time filtering for flights */ }
+export function update(timeRange) {
+  const start = timeRange?.start ?? -Infinity;
+  const end = timeRange?.end ?? Infinity;
+  entities.forEach(e => {
+    const visible = !Number.isNaN(e.timestamp) && e.timestamp >= start && e.timestamp <= end;
+    e.line.visible = visible;
+    e.marker.visible = visible;
+  });
+}
+
 export function setVisible(visible) { if (group) group.visible = visible; }
 export function dispose() {
   if (group) {
     group.traverse(c => { if (c.geometry) c.geometry.dispose(); if (c.material) c.material.dispose(); });
     group.parent?.remove(group);
     group = null;
+    entities = [];
   }
 }
